@@ -1,0 +1,519 @@
+================================================================================
+  FOX PETROLEUM — Problems & Issues Encountered During Development
+================================================================================
+
+1. LANDING PAGE DESIGN — REPETITIVE LAYOUT
+   ─────────────────────────────────────────
+   Problem:
+     Every section (Services, About, Advantages, Testimonials) followed the
+     exact same visual pattern: centered heading → uniform 3- or 4-column grid
+     of identical cards with icon-in-a-box + title + description.
+     This made the page feel monotonous and template-like.
+
+   Resolution:
+     Completely redesigned each section with a unique layout:
+     - Hero: split 2-column layout with logo visual + cinematic dark bg
+     - Services: bento grid (2 featured cards + 4 smaller ones, mixed sizes)
+     - About: timeline-style milestones + stacked stat/image cards
+     - Advantages: numbered cards on dark bg with watermark logo
+     - Testimonials: single-featured carousel instead of 3 identical cards
+     - Contact: full-bleed dark/light split (info panel | form)
+
+2. MISSING COMPANY LOGO
+   ─────────────────────
+   Problem:
+     The entire app used a generic Lucide "Droplets" icon instead of the
+     actual Fox Petroleum logo. This reduced brand identity across the
+     nav, hero, and footer.
+
+   Resolution:
+     Integrated the real Fox Petroleum logo (/logo.png) in:
+     - Navigation bar
+     - Hero section (large visual)
+     - Advantages section (background watermark)
+     - Footer branding
+
+3. CORS / API INTEGRATION FOR CONTACT FORM
+   ────────────────────────────────────────
+   Problem:
+     The contact form POST to /api/contact initially returned CORS errors
+     when the frontend (Vite dev server) and backend (Laravel) ran on
+     different ports.
+
+   Resolution:
+     Configured Laravel CORS in config/cors.php to allow the frontend
+     origin. Also ensured the Vite proxy in vite.config.ts forwards
+     /api requests to the Laravel backend.
+
+4. SCROLL BEHAVIOR AND NAVIGATION STATE
+   ─────────────────────────────────────
+   Problem:
+     The sticky nav didn't transition smoothly between transparent (hero)
+     and solid (scrolled) states. On fast scrolls the state flickered.
+
+   Resolution:
+     Replaced instant class swap with CSS transition-all duration-500
+     and added backdrop-blur-xl for a smoother glassmorphism effect.
+
+5. MOBILE MENU USABILITY
+   ──────────────────────
+   Problem:
+     Mobile menu had no entrance animation and the tap targets were too
+     small for comfortable use. Closing the menu after clicking a nav link
+     was not immediate.
+
+   Resolution:
+     Added animate-fade-in to the mobile panel, increased tap targets with
+     rounded-xl + larger padding, and ensured setIsMobileMenuOpen(false) is
+     called inside scrollToSection.
+
+6. TESTIMONIALS AUTO-ROTATION MEMORY LEAK
+   ───────────────────────────────────────
+   Problem:
+     Early implementation of auto-rotating testimonials used setInterval
+     without cleanup, causing memory leaks when navigating away from the
+     landing page.
+
+   Resolution:
+     Wrapped the interval in a useEffect with a proper cleanup return that
+     calls clearInterval on unmount.
+
+7. DOCKER / ENTRYPOINT ISSUES
+   ───────────────────────────
+   Problem:
+     The Dockerfile and docker-compose.yml had mismatched PHP/Node versions,
+     and the entrypoint.sh script did not wait for MySQL to be ready before
+     running migrations.
+
+   Resolution:
+     Pinned PHP 8.2 and Node 18 in the Dockerfile. Added a wait-for-it
+     loop in entrypoint.sh to poll MySQL availability before php artisan
+     migrate.
+
+8. VITE CONFIG CONFLICTS (vite.config.js vs vite.config.ts)
+   ─────────────────────────────────────────────────────────
+   Problem:
+     Both vite.config.js and vite.config.ts existed in the front/ directory,
+     causing Vite to sometimes pick the wrong one depending on the version.
+
+   Resolution:
+     Kept only vite.config.ts (TypeScript) and removed the .js duplicate
+     to avoid ambiguity.
+
+9. TAILWIND CLASS CONFLICTS / PURGE
+   ─────────────────────────────────
+   Problem:
+     Some custom classes (gradient-industrial, input-field, section-padding)
+     were not being generated in production builds because Tailwind's
+     content paths didn't include all component directories.
+
+   Resolution:
+     Updated tailwind.config.js content array to include:
+       "./src/**/*.{js,ts,jsx,tsx}"
+       "./index.html"
+
+10. JWT AUTHENTICATION TOKEN REFRESH
+    ─────────────────────────────────
+    Problem:
+      JWT tokens expired after 60 minutes and the frontend had no silent
+      refresh mechanism, forcing users to re-login mid-session.
+
+    Resolution:
+      Added an Axios response interceptor that catches 401 errors, calls
+      the /api/auth/refresh endpoint, and retries the original request
+      with the new token.
+
+11. INTERNATIONALIZATION (i18next) — WHY & PROBLEMS FACED
+    ──────────────────────────────────────────────────────
+    Why added:
+      Fox Petroleum operates in Morocco where French and Arabic are both
+      widely used and English is needed for international partners. Adding
+      i18next (with react-i18next and i18next-browser-languagedetector)
+      enables:
+        - Full French (fr), English (en), and Arabic (ar) UI translations
+        - Automatic language detection from browser preferences
+        - RTL layout support for Arabic
+        - A single codebase serving all language markets
+        - Easy addition of future languages without code changes
+
+    Problems faced:
+      a) Missing translation keys — Early on, many components used raw
+         French strings. Converting them to t('key') calls required
+         auditing every single component and creating matching keys in
+         all three locale JSON files (en.json, fr.json, ar.json).
+
+      b) Namespace/key conflicts — Some translation keys collided
+         between pages (e.g., "title" used in multiple contexts).
+         Resolved by scoping keys per feature (orders.title,
+         invoices.title, reports.title, etc.).
+
+      c) Interpolation issues — Pluralization and variable interpolation
+         (e.g., t('lowStock', { count: 5 })) did not work initially
+         because i18next's pluralization rules differ between languages.
+         Fixed by adding proper plural forms for each locale.
+
+      d) RTL layout breakage — Switching to Arabic caused many layout
+         issues: margins, paddings, and icons were mirrored incorrectly.
+         Required adding dir="rtl" support and auditing Tailwind classes
+         (e.g., ml-* vs rtl:mr-*).
+
+      e) Language persistence — The selected language was lost on page
+         refresh until i18next-browser-languagedetector was configured
+         to persist the choice in localStorage.
+
+      f) Date/number formatting — Dates (toLocaleDateString) and currency
+         (toLocaleString) used hardcoded 'fr-FR' locale instead of
+         dynamically adapting to the selected i18next language.
+
+12. PDF/CSV EXPORT & PRINT — NON-FUNCTIONAL BUTTONS
+    ────────────────────────────────────────────────
+    Problem:
+      The Reports page had "Export PDF", "Export CSV", and "Print" buttons
+      that were either stubs (showing only a toast message) or had no
+      onClick handler at all. The Invoices page "Download PDF" menu item
+      had no handler. jspdf and html2canvas were installed in package.json
+      but never imported or used anywhere.
+
+    Resolution:
+      Created a comprehensive export utility module (src/utils/exportUtils.ts)
+      that provides:
+        - exportReportPDF() — generates a well-structured PDF report with
+          company header, summary cards, sales table, and customer table
+          using jsPDF
+        - exportReportCSV() — generates UTF-8 CSV with BOM for Excel
+          compatibility, including summary, sales data, and customer data
+        - printReport() — opens a styled print window with full report
+          layout optimized for printing
+        - generateInvoicePDF() — creates professional invoice/receipt PDFs
+          with company branding, customer details, itemized table with
+          alternating rows, totals breakdown, and status badge
+        - printInvoice() — opens a styled print window for invoice/receipt
+        - exportInvoicesCSV() — exports filtered invoice list as CSV
+      Wired all buttons in ReportsPage, InvoicesPage, and OrderDetailPage
+      to use these real functions.
+
+================================================================================
+  Last updated: 2026-03-03
+================================================================================
+
+--- UPDATE 2026-03-03: COD DELIVERY SYSTEM & BUILD FIXES ---
+
+12. BRANDING — "LUBRIFLOW" STILL APPEARING INSTEAD OF "FOX PETROLEUM"
+    ──────────────────────────────────────────────────────────────────
+    Problem:
+      The mobile sidebar in DashboardLayout.tsx (line 244) still displayed
+      "LubriFlow" instead of "Fox Petroleum". The .env.example also had
+      VITE_APP_NAME=LubriFlow.
+
+    Resolution:
+      Replaced "LubriFlow" with "Fox Petroleum" in the mobile sidebar and
+      in front/.env.example.
+
+13. FULL COD (CASH ON DELIVERY) SYSTEM IMPLEMENTATION
+    ──────────────────────────────────────────────────
+    Problem:
+      The delivery workflow had no payment tracking, no digital signature
+      capture, no GPS tracking, no cash reconciliation, and no security
+      enforcement (deliveries could be marked complete without payment).
+
+    Resolution — Backend:
+      - Created migration (2026_03_03_000001_enhance_deliveries_for_cod.php)
+        adding 18 new columns: cash_amount, collected_amount,
+        payment_confirmed, payment_locked, signature_data,
+        signature_captured_at, gps_tracking_log (JSON), has_discrepancy,
+        incident_report, cash_submitted, cash_verified, verified_by, etc.
+      - Updated Delivery model with new fillable/casts, canBeCompleted()
+        check (requires payment + signature), checkCashDiscrepancy(),
+        and appendGpsLog() helper.
+      - Rewrote DeliveryController with 6 new endpoints:
+        confirmPayment, captureSignature, updateLocation,
+        submitCashSummary, verifyCash, trackDrivers.
+        Security: completion blocked without payment_confirmed AND
+        signature_data; payment data locked after completion.
+      - Added all new routes to routes/api.php under chauffeur and admin
+        role middleware.
+
+    Resolution — Frontend:
+      - Updated Delivery type (types/index.ts) with all new COD fields
+        + new interfaces: GpsTrackingEntry, CashSummary, DriverLocation.
+      - Updated deliveries service with new API methods.
+      - Created SignaturePad component (canvas-based, touch+mouse, outputs
+        base64 PNG).
+      - Created useGpsTracking hook (watchPosition, configurable interval,
+        auto start/stop).
+      - Rewrote ChauffeurDashboard (~600 lines): full COD workflow with
+        GPS auto-tracking, payment confirmation dialog, signature capture,
+        cash summary submission, discrepancy warnings, stat cards.
+      - Updated DeliveriesPage (admin view): added 4 COD stat cards
+        (expected cash, collected, pending verification, discrepancies),
+        COD + Vérification columns in table, inline icons for payment/
+        signature/lock/discrepancy status, verify cash button, full
+        detail dialog with signature preview, GPS log, incident report.
+      - Updated MapTrackingPage: added Drivers/Deliveries toggle,
+        real-time driver markers (red) with accuracy circles, auto-refresh
+        every 15s with live/pause toggle, COD cash amounts in sidebar and
+        popups, 5 stat cards including cash-in-transit and incidents.
+
+14. BUILD ERRORS (31 TypeScript errors after COD implementation)
+    ────────────────────────────────────────────────────────────
+    Problems & Fixes:
+      a) ChauffeurDashboard.tsx — TS6133: 'totalCashToday' declared but
+         never read. → Removed the unused variable.
+      b) DeliveriesPage.tsx — TS2322: Lucide icons don't accept a 'title'
+         prop. 4 icons (Banknote, PenLine, Shield, AlertTriangle) had
+         title="..." directly. → Wrapped each in <span title="...">.
+      c) MapTrackingPage.tsx — TS6133: unused imports 'MapPin' and
+         'CardTitle'. → Removed from import statements.
+      d) MapTrackingPage.tsx — TS2339: DriverLocation type uses
+         driver.chauffeur?.id/name, driver.currentLocation.latitude/
+         longitude, driver.activeDeliveries (Delivery[]) — but code
+         referenced non-existent properties driverId, driverName,
+         latitude, longitude, totalCashAmount, lastUpdate directly.
+         → Rewrote all accesses to match the real DriverLocation
+         interface; computed cash from activeDeliveries.reduce().
+      e) MapTrackingPage.tsx — TS1005: syntax error from mismatched
+         closing parens after the driver list rewrite.
+         → Fixed JSX nesting.
+
+    Result: Build passes with 0 errors.
+
+15. SIGNATURE CAPTURE & GPS TRACKING — LOGIC EXPLANATION
+    ─────────────────────────────────────────────────────
+    Question: How is the signature captured? Regarding GPS, is it really
+    the driver who is being located, and must be located?
+
+    A) Signature Capture Logic:
+       The signature is captured using an HTML5 Canvas element wrapped in
+       the SignaturePad component (front/src/components/SignaturePad.tsx).
+
+       Flow:
+       1. During an in_progress delivery, the chauffeur taps "Signature"
+          in ChauffeurDashboard.tsx, opening a Dialog overlay.
+       2. The customer draws their signature directly on the chauffeur's
+          phone/tablet screen using finger or stylus.
+       3. The SignaturePad component tracks mouse and touch events
+          (mousedown/mousemove/mouseup + touchstart/touchmove/touchend)
+          and renders strokes on a <canvas> element.
+       4. When the customer confirms, canvas.toDataURL('image/png')
+          converts the drawing to a base64-encoded PNG string.
+       5. The chauffeur's browser simultaneously captures its current GPS
+          position via navigator.geolocation.getCurrentPosition().
+       6. Both pieces of data are POSTed to the backend endpoint
+          POST /api/deliveries/{id}/capture-signature with payload:
+          { signature_data: "data:image/png;base64,...",
+            latitude: 33.xxxx, longitude: -7.xxxx }
+       7. The backend (DeliveryController@captureSignature) stores
+          signature_data and signature_captured_at in the delivery record,
+          and appends a 'signature' event to the gps_tracking_log JSON
+          column with the GPS coordinates.
+       8. Security: if payment_locked is true (delivery already completed),
+          the backend rejects the request. Only the assigned chauffeur or
+          an admin can capture the signature.
+       9. Completion gate: a delivery CANNOT be marked 'completed' unless
+          BOTH payment_confirmed=true AND signature_data is non-null. This
+          is enforced in the frontend (handleCompleteDelivery checks both
+          conditions before calling the API).
+
+    B) GPS Tracking Logic:
+       YES — it IS the driver (chauffeur) who is being located, and this
+       is by design. Here's why and how:
+
+       The useGpsTracking hook (front/src/hooks/useGpsTracking.ts) uses
+       the browser's navigator.geolocation.watchPosition() API with
+       { enableHighAccuracy: true }. This API reads the GPS sensor of
+       the DEVICE running the browser — which is the chauffeur's phone.
+
+       Flow:
+       1. When ChauffeurDashboard detects any delivery with status
+          'in_progress', it enables GPS tracking automatically.
+       2. The hook calls navigator.geolocation.watchPosition() which
+          starts continuous GPS monitoring on the chauffeur's device.
+       3. Every 15 seconds (configurable via updateInterval), the
+          onPositionUpdate callback fires and sends the chauffeur's
+          current latitude/longitude to:
+          POST /api/deliveries/{id}/update-location
+       4. The backend stores the latest position on the delivery record
+          (latitude, longitude columns) and appends a 'location_update'
+          event to gps_tracking_log.
+       5. Admins and managers can view all active drivers in real-time
+          via GET /api/deliveries/track-drivers, which returns all
+          in_progress deliveries with their latest GPS coordinates.
+          This powers the MapTrackingPage.
+
+       Why the driver, not the vehicle?
+       - The chauffeur's phone has a GPS sensor; the vehicle (typically)
+         does not have a connected GPS tracker integrated with the app.
+       - Browser Geolocation API can only read the position of the device
+         it runs on — i.e., the chauffeur's phone/tablet.
+       - This is standard for logistics apps: the driver carries the
+         device, so locating the device = locating the driver = locating
+         the vehicle (since the driver is driving the vehicle).
+
+       GPS events logged in gps_tracking_log:
+       - 'location_update' — periodic 15s position updates
+       - 'status_change'   — when delivery status changes (start/complete)
+       - 'payment'         — when COD payment is confirmed
+       - 'signature'       — when customer signature is captured
+
+16. DELIVERY NOT SHOWING IN CHAUFFEUR DASHBOARD AFTER CREATION
+    ──────────────────────────────────────────────────────────
+    Problem:
+      When an admin/manager/commercial creates a new delivery (via
+      DeliveriesPage.tsx → POST /api/deliveries), the delivery does NOT
+      appear in the chauffeur's dashboard until the chauffeur manually
+      refreshes the browser (F5). The ChauffeurDashboard only fetches
+      deliveries once on mount (useEffect with [] dependency) and has no
+      refresh mechanism.
+
+      Additionally, the ChauffeurDashboard prominently shows only
+      "today's deliveries" and "in progress" deliveries. If the planned
+      date is in the future, the delivery only appears in the smaller
+      "Pending Deliveries" section, which the chauffeur might overlook.
+
+    Resolution:
+      a) Added a manual refresh button to ChauffeurDashboard header so
+         the chauffeur can reload their deliveries at any time.
+      b) Added auto-refresh (polling every 30 seconds) so newly assigned
+         deliveries appear automatically without manual intervention.
+      c) The "Pending Deliveries" section now shows ALL planned deliveries
+         (not just today's), ensuring future-dated deliveries are visible.
+
+17. ROUTE SHADOWING — /deliveries/track-drivers UNREACHABLE
+    ────────────────────────────────────────────────────────
+    Problem:
+      In routes/api.php, the route GET /deliveries/track-drivers was
+      registered AFTER GET /deliveries/{delivery} in a separate middleware
+      group. Laravel evaluates routes top-to-bottom. Since {delivery} is
+      a wildcard, the string "track-drivers" matched it first, causing
+      Laravel to try to find a Delivery with ID "track-drivers" → 404.
+      The trackDrivers endpoint was completely unreachable.
+
+    Resolution:
+      Moved the track-drivers route declaration BEFORE the {delivery}
+      wildcard route to ensure it is matched first. Literal routes must
+      always precede wildcard routes in Laravel.
+
+18. INVOICE STATUS MISMATCH (FRONTEND vs BACKEND)
+    ──────────────────────────────────────────────
+    Problem:
+      Backend InvoiceController uses statuses: 'pending', 'paid',
+      'overdue', 'cancelled'. Frontend InvoiceStatus type was defined as
+      'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled'. There was NO
+      'pending' status in the frontend and NO 'draft'/'sent' in the
+      backend. Result: newly created invoices (status='pending') could not
+      match any frontend badge/filter, and filtering by 'draft' or 'sent'
+      returned nothing.
+
+    Resolution:
+      Updated InvoiceStatus type to 'pending' | 'paid' | 'overdue' |
+      'cancelled'. Updated InvoicesPage: status badge mapping, filter
+      dropdown, dropdown actions, and outstanding amount calculation to
+      use 'pending' instead of 'draft'/'sent'. Removed 'Send' action
+      from dropdown menu.
+
+19. INVOICES STATUS CHANGE NOT PERSISTED TO BACKEND
+    ────────────────────────────────────────────────
+    Problem:
+      InvoicesPage.handleStatusChange() only updated local React state
+      (setInvoices), never called invoicesService.updateInvoiceStatus().
+      Any status change was lost on page refresh.
+
+    Resolution:
+      Added await invoicesService.updateInvoiceStatus() API call inside
+      handleStatusChange() before updating local state. Added try/catch
+      with error toast.
+
+20. DASHBOARD CONTROLLER — WRONG OVERDUE INVOICES COUNT
+    ────────────────────────────────────────────────────
+    Problem:
+      DashboardController.adminDashboard() counted overdue invoices with
+      Invoice::where('status', 'pending')->count(), which is wrong —
+      'pending' is not 'overdue'. Also counted pending deliveries using
+      status 'delivered' which doesn't exist (correct status is
+      'completed').
+
+    Resolution:
+      Changed overdue invoices query to check for status='overdue' OR
+      (status='pending' AND due_date < now()). Changed pending deliveries
+      to exclude 'completed' and 'cancelled' instead of 'delivered'.
+
+21. INVOICE CONTROLLER — INCONSISTENT RESPONSE FORMAT
+    ──────────────────────────────────────────────────
+    Problem:
+      InvoiceController.index() returned properly formatted camelCase data,
+      but store(), show(), update(), and updateStatus() returned raw
+      Eloquent models with snake_case fields (invoice_number, paid_amount,
+      etc.). Frontend received different field names depending on which
+      endpoint was called.
+
+    Resolution:
+      Extracted a formatInvoice() private method (mirroring the pattern
+      used in DeliveryController). Applied it to all endpoints: index(),
+      store(), show(), update(), updateStatus().
+
+22. PAYMENT METHOD VALUES MISMATCH
+    ──────────────────────────────
+    Problem:
+      Frontend Payment type used: 'cash' | 'check' | 'transfer' | 'card'.
+      Backend InvoiceController.addPayment() validates: 'cash' |
+      'bank_transfer' | 'check' | 'credit_card'. Payments submitted from
+      frontend with 'transfer' or 'card' would be rejected by validation.
+
+    Resolution:
+      Updated frontend Payment type to match backend: 'cash' | 'check' |
+      'bank_transfer' | 'credit_card'.
+
+23. COMMERCIAL DASHBOARD — BROKEN DATA SHAPE & HARDCODED VALUES
+    ────────────────────────────────────────────────────────────
+    Problem:
+      a) CommercialDashboard fetched getDashboardStats() which, for the
+         'commercial' role, returns { stats: {snake_case}, recent_orders }
+         — but extracted it as flat DashboardStats (camelCase). The
+         monthly chart relied on stats.revenueByMonth which doesn't exist
+         in the commercial response.
+      b) Deliveries card showed hardcoded "3" and "2 en cours".
+      c) Orders and Customers cards showed hardcoded percentage changes
+         (+8.5%, +2).
+
+    Resolution:
+      a) Removed unnecessary dashboardService.getDashboardStats() call
+         since CommercialDashboard already fetches orders/products/
+         customers directly. Computed monthly chart data from orders array.
+      b) Replaced hardcoded delivery count with actual delivery-status
+         orders count (orders with status 'delivery').
+      c) Removed hardcoded percentage strings.
+
+24. USERS PAGE — INCOMPLETE ROLE FILTER
+    ────────────────────────────────────
+    Problem:
+      UsersPage role filter SelectContent only offered: admin, commercial,
+      chauffeur. Missing: manager and client roles.
+
+    Resolution:
+      Added 'manager' and 'client' options to both the filter dropdown
+      and the user creation/edit form role selector.
+
+25. SETTINGS PAGE — EXCLUDED COMMERCIAL ROLE
+    ─────────────────────────────────────────
+    Problem:
+      The /settings route ProtectedRoute allowed only ['admin', 'manager',
+      'chauffeur']. Commercial users could not access profile or password
+      settings.
+
+    Resolution:
+      Added 'commercial' to the allowedRoles array.
+
+26. AUTH SERVICE — MISSING 'client' ROLE
+    ────────────────────────────────────
+    Problem:
+      auth.ts User interface defined role as 'admin' | 'manager' |
+      'commercial' | 'chauffeur' | 'user' — missing 'client'. But the
+      backend register() assigns 'client' role, and DashboardRedirect
+      handles 'client'.
+
+    Resolution:
+      Added 'client' to the role union in auth.ts.
+
+================================================================================
+  Last updated: 2026-03-04
+================================================================================

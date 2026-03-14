@@ -1,0 +1,827 @@
+{
+    "common": {
+        "save": "حفظ",
+        "saving": "جاري الحفظ...",
+        "cancel": "إلغاء",
+        "create": "إنشاء",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "view": "عرض",
+        "viewAll": "عرض الكل",
+        "search": "بحث...",
+        "export": "تصدير",
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "activate": "تفعيل",
+        "deactivate": "تعطيل",
+        "status": "الحالة",
+        "actions": "الإجراءات",
+        "print": "طباعة",
+        "close": "إغلاق",
+        "loading": "جاري التحميل...",
+        "all": "الكل",
+        "yes": "نعم",
+        "no": "لا",
+        "confirm": "تأكيد",
+        "back": "رجوع"
+    },
+    "status": {
+        "draft": "مسودة",
+        "confirmed": "مؤكد",
+        "preparation": "تحضير",
+        "delivery": "توصيل",
+        "delivered": "تم التوصيل",
+        "cancelled": "ملغي",
+        "planned": "مخطط",
+        "inProgress": "قيد التنفيذ",
+        "completed": "مكتمل",
+        "sent": "مرسل",
+        "paid": "مدفوع",
+        "overdue": "متأخر"
+    },
+    "nav": {
+        "dashboard": "لوحة التحكم",
+        "orders": "الطلبات",
+        "catalog": "الكتالوج",
+        "myOrders": "طلباتي",
+        "products": "المنتجات",
+        "customers": "العملاء",
+        "deliveries": "التوصيلات",
+        "invoices": "الفواتير",
+        "kanban": "كانبان",
+        "calendar": "التخطيط",
+        "tracking": "تتبع GPS",
+        "reports": "التقارير",
+        "vehicles": "المركبات",
+        "careers": "الوظائف",
+        "users": "المستخدمون",
+        "settings": "الإعدادات",
+        "profile": "ملفي الشخصي"
+    },
+    "layout": {
+        "logout": "تسجيل الخروج",
+        "search": "بحث..."
+    },
+    "login": {
+        "brand": "فوكس بتروليوم",
+        "tagline": "توزيع زيوت التشحيم",
+        "welcome": "مرحباً بك في مساحة العمل الخاصة بك",
+        "description": "سجّل دخولك للوصول إلى لوحة التحكم وإدارة طلباتك وتتبع توصيلاتك في الوقت الحقيقي.",
+        "title": "تسجيل الدخول",
+        "subtitle": "أدخل بيانات الاعتماد الخاصة بك للوصول إلى حسابك",
+        "emailLabel": "البريد الإلكتروني",
+        "emailPlaceholder": "name@company.com",
+        "passwordLabel": "كلمة المرور",
+        "rememberMe": "تذكرني",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "loggingIn": "جاري تسجيل الدخول...",
+        "submit": "تسجيل الدخول",
+        "noAccount": "ليس لديك حساب؟",
+        "register": "إنشاء حساب"
+    },
+    "register": {
+        "title": "إنشاء حساب",
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "confirmPassword": "تأكيد كلمة المرور",
+        "submitting": "جاري التسجيل...",
+        "submit": "التسجيل",
+        "hasAccount": "لديك حساب بالفعل؟",
+        "login": "تسجيل الدخول",
+        "toast": {
+            "success": "تم التسجيل بنجاح، يرجى تسجيل الدخول.",
+            "error": "خطأ في التسجيل"
+        }
+    },
+    "settings": {
+        "title": "الإعدادات",
+        "subtitle": "إعداد تطبيق التكوين",
+        "tabs": {
+            "company": "الشركة",
+            "profile": "الملف الشخصي",
+            "notifications": "الإشعارات",
+            "security": "الأمان"
+        },
+        "company": {
+            "title": "معلومات الشركة",
+            "name": "اسم الشركة",
+            "ice": "ICE",
+            "email": "البريد الإلكتروني",
+            "phone": "الهاتف",
+            "address": "العنوان",
+            "financialTitle": "الإعدادات المالية",
+            "tva": "ضريبة القيمة المضافة الافتراضية (%)",
+            "currency": "العملة",
+            "currencyMAD": "درهم مغربي - MAD",
+            "currencyEUR": "يورو - EUR",
+            "currencyUSD": "دولار أمريكي - USD",
+            "paymentDelay": "مهلة الدفع (أيام)"
+        },
+        "profile": {
+            "title": "المعلومات الشخصية",
+            "fullName": "الاسم الكامل",
+            "email": "البريد الإلكتروني",
+            "phone": "الهاتف",
+            "language": "اللغة"
+        },
+        "notifications": {
+            "title": "تفضيلات الإشعارات",
+            "newOrders": "طلبات جديدة",
+            "newOrdersDesc": "تلقي إشعار عند وجود طلب جديد",
+            "deliveriesComplete": "توصيلات مكتملة",
+            "deliveriesCompleteDesc": "إشعار عند اكتمال التوصيل",
+            "lowStock": "مخزون منخفض",
+            "lowStockDesc": "تنبيه عندما يكون المخزون حرجاً",
+            "paymentsReceived": "مدفوعات مستلمة",
+            "paymentsReceivedDesc": "إشعار عند استلام دفعة",
+            "overdueInvoices": "فواتير متأخرة",
+            "overdueInvoicesDesc": "تذكير بالفواتير غير المدفوعة"
+        },
+        "security": {
+            "changePassword": "تغيير كلمة المرور",
+            "currentPassword": "كلمة المرور الحالية",
+            "newPassword": "كلمة المرور الجديدة",
+            "confirmPassword": "تأكيد كلمة المرور الجديدة",
+            "twoFactorTitle": "المصادقة الثنائية",
+            "enable2fa": "تفعيل المصادقة الثنائية",
+            "enable2faDesc": "أمّن حسابك بمصادقة إضافية"
+        },
+        "toast": {
+            "companySaved": "تم حفظ إعدادات الشركة",
+            "profileSaved": "تم تحديث الملف الشخصي بنجاح",
+            "profileError": "خطأ في تحديث الملف الشخصي",
+            "passwordMismatch": "كلمتا المرور غير متطابقتين",
+            "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+            "passwordChanged": "تم تغيير كلمة المرور بنجاح",
+            "passwordError": "خطأ في تغيير كلمة المرور",
+            "notificationsSaved": "تم حفظ تفضيلات الإشعارات"
+        }
+    },
+    "adminDashboard": {
+        "title": "لوحة تحكم المدير",
+        "subtitle": "نظرة عامة على نشاط الشركة",
+        "newOrder": "طلب جديد",
+        "stats": {
+            "totalOrders": "إجمالي الطلبات",
+            "revenue": "الإيرادات",
+            "customers": "العملاء",
+            "products": "المنتجات",
+            "vsLastMonth": "مقارنة بالشهر الماضي"
+        },
+        "lowStock": "{{count}} منتجات بمخزون حرج",
+        "lowStockAction": "يلزم إعادة التخزين",
+        "overdueInvoices": "{{count}} فواتير متأخرة",
+        "overdueInvoicesAction": "يلزم متابعة العميل",
+        "revenueChart": "الإيرادات الشهرية",
+        "orderStatusChart": "الطلبات حسب الحالة",
+        "recentOrders": "الطلبات الأخيرة",
+        "topProducts": "المنتجات الأكثر مبيعاً",
+        "units": "وحدات",
+        "toast": {
+            "loadError": "خطأ في تحميل لوحة التحكم"
+        }
+    },
+    "commercialDashboard": {
+        "title": "لوحة التحكم التجارية",
+        "subtitle": "نظرة عامة على نشاطك التجاري",
+        "newOrder": "طلب جديد",
+        "myOrders": "طلباتي",
+        "pending": "قيد الانتظار",
+        "pendingAction": "للمعالجة",
+        "myCustomers": "عملائي",
+        "newCustomers": "جدد",
+        "deliveriesToday": "توصيلات اليوم",
+        "inProgress": "2 قيد التنفيذ",
+        "thisMonth": "هذا الشهر",
+        "lowStockAlert": "{{count}} منتج(ات) بمخزون حرج",
+        "lowStockDesc": "بعض المنتجات تحتاج إعادة تخزين عاجلة",
+        "viewProducts": "عرض المنتجات",
+        "monthlyActivity": "نشاطي الشهري",
+        "chartOrders": "الطلبات",
+        "chartRevenue": "الإيرادات (درهم)",
+        "recentOrders": "آخر طلباتي",
+        "quickActions": "إجراءات سريعة",
+        "actionNewOrder": "طلب جديد",
+        "actionKanban": "مهام كانبان",
+        "actionDelivery": "جدول التوصيل",
+        "actionNewCustomer": "عميل جديد",
+        "toast": {
+            "loadError": "خطأ في تحميل لوحة التحكم"
+        }
+    },
+    "chauffeurDashboard": {
+        "title": "مساحة السائق",
+        "subtitle": "إدارة توصيلات اليوم",
+        "online": "متصل",
+        "offline": "غير متصل",
+        "today": "اليوم",
+        "pending": "قيد الانتظار",
+        "inProgress": "قيد التنفيذ",
+        "completed": "مكتملة",
+        "currentDelivery": "التوصيل الحالي",
+        "statusInDelivery": "قيد التوصيل",
+        "route": "المسار",
+        "finish": "إنهاء",
+        "pendingDeliveries": "توصيلات معلقة",
+        "planned": "مخطط",
+        "start": "بدء",
+        "completedDeliveries": "توصيلات مكتملة",
+        "statusDelivered": "تم التوصيل",
+        "offlineMode": "وضع عدم الاتصال مفعل",
+        "offlineDesc": "سيتم مزامنة إجراءاتك عند استعادة الاتصال",
+        "deliveryMap": "خريطة التوصيلات",
+        "goOffline": "قطع الاتصال",
+        "goOnline": "الاتصال",
+        "toast": {
+            "started": "بدأ التوصيل",
+            "startError": "خطأ في بدء التوصيل",
+            "completed": "اكتمل التوصيل",
+            "completeError": "خطأ في إكمال التوصيل",
+            "loadError": "خطأ في تحميل التوصيلات"
+        }
+    },
+    "clientDashboard": {
+        "welcome": "مرحباً، {{name}}",
+        "subtitle": "ملخص طلباتك",
+        "totalOrders": "إجمالي الطلبات",
+        "inProgress": "قيد التنفيذ",
+        "delivered": "تم التوصيل",
+        "totalSpent": "إجمالي الإنفاق",
+        "recentOrders": "طلباتي الأخيرة",
+        "noOrders": "لا توجد طلبات حتى الآن",
+        "toast": {
+            "loadError": "خطأ في تحميل لوحة التحكم"
+        }
+    },
+    "orders": {
+        "title": "الطلبات",
+        "subtitle": "إدارة طلبات العملاء",
+        "newOrder": "طلب جديد",
+        "searchPlaceholder": "بحث برقم أو عميل...",
+        "filterStatus": "تصفية حسب الحالة",
+        "allStatuses": "جميع الحالات",
+        "table": {
+            "orderNumber": "رقم الطلب",
+            "customer": "العميل",
+            "date": "التاريخ",
+            "total": "المجموع",
+            "status": "الحالة",
+            "actions": "الإجراءات"
+        },
+        "action": {
+            "viewDetails": "عرض التفاصيل",
+            "edit": "تعديل",
+            "startPreparation": "بدء التحضير",
+            "startDelivery": "بدء التوصيل",
+            "markDelivered": "تأكيد التوصيل",
+            "delete": "حذف"
+        },
+        "confirm": {
+            "delete": "هل أنت متأكد من حذف هذا الطلب؟"
+        },
+        "toast": {
+            "deleted": "تم حذف الطلب بنجاح",
+            "deleteError": "خطأ في حذف الطلب",
+            "statusUpdated": "تم تحديث الحالة",
+            "statusError": "خطأ في تحديث الحالة",
+            "loadError": "خطأ في تحميل الطلبات",
+            "created": "تم إنشاء الطلب بنجاح",
+            "createError": "خطأ في إنشاء الطلب"
+        },
+        "noOrdersFound": "لم يتم العثور على طلبات",
+        "notFound": "الطلب غير موجود",
+        "backToOrders": "العودة إلى الطلبات",
+        "action": {
+            "viewDetails": "عرض التفاصيل",
+            "edit": "تعديل",
+            "startPreparation": "بدء التحضير",
+            "startDelivery": "بدء التوصيل",
+            "markDelivered": "تأكيد التوصيل",
+            "delete": "حذف",
+            "confirm": "تأكيد"
+        },
+        "form": {
+            "customer": "العميل",
+            "selectCustomer": "اختر عميلاً",
+            "products": "المنتجات",
+            "add": "إضافة",
+            "product": "المنتج",
+            "notes": "ملاحظات",
+            "notesPlaceholder": "ملاحظات إضافية...",
+            "estimatedTotal": "المجموع التقديري",
+            "cancel": "إلغاء",
+            "createOrder": "إنشاء الطلب",
+            "dataError": "خطأ في تحميل البيانات",
+            "editOrder": "تعديل الطلب",
+            "editOrderSubtitle": "تعديل تفاصيل الطلب",
+            "newOrderSubtitle": "أدخل المعلومات لإنشاء طلب",
+            "generalInfo": "معلومات عامة",
+            "deliveryDate": "تاريخ التوصيل المطلوب",
+            "quantity": "الكمية",
+            "unitPrice": "سعر الوحدة",
+            "totalHT": "المجموع بدون ضريبة",
+            "selectProduct": "اختر منتجاً",
+            "subtotalHT": "المجموع الفرعي بدون ضريبة",
+            "tva": "ضريبة القيمة المضافة",
+            "totalTTC": "المجموع شامل الضريبة",
+            "addProductError": "يرجى إضافة منتج واحد على الأقل"
+        },
+        "detail": {
+            "createdOn": "أنشئ في",
+            "orderedItems": "المنتجات المطلوبة",
+            "delivery": "التوصيل",
+            "scheduledFor": "مقرر في",
+            "noDeliveryPlanned": "لا يوجد توصيل مخطط",
+            "commercial": "المندوب التجاري",
+            "unassigned": "غير معين"
+        }
+    },
+    "products": {
+        "title": "المنتجات",
+        "subtitle": "إدارة كتالوج المنتجات والمخزون",
+        "newProduct": "منتج جديد",
+        "lowStockAlert": "{{count}} منتج(ات) بمخزون حرج",
+        "lowStockDesc": "بعض المنتجات تحتاج إعادة تخزين",
+        "searchPlaceholder": "البحث عن منتج...",
+        "category": "الفئة",
+        "allCategories": "جميع الفئات",
+        "lowStockFilter": "مخزون منخفض",
+        "stock": {
+            "outOfStock": "نفد المخزون",
+            "critical": "حرج",
+            "low": "منخفض",
+            "ok": "جيد",
+            "label": "المخزون",
+            "min": "الحد الأدنى:"
+        },
+        "action": {
+            "edit": "تعديل",
+            "delete": "حذف"
+        },
+        "dialog": {
+            "editTitle": "تعديل المنتج",
+            "createTitle": "منتج جديد"
+        },
+        "form": {
+            "code": "الرمز *",
+            "category": "الفئة",
+            "name": "الاسم *",
+            "description": "الوصف",
+            "descPlaceholder": "وصف المنتج...",
+            "price": "السعر *",
+            "tva": "ضريبة القيمة المضافة (%)",
+            "unit": "الوحدة *",
+            "stock": "المخزون",
+            "minStock": "الحد الأدنى للمخزون",
+            "active": "نشط",
+            "cancel": "إلغاء"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل المنتجات",
+            "deleteConfirm": "هل أنت متأكد من حذف هذا المنتج؟",
+            "deleted": "تم حذف المنتج بنجاح",
+            "deleteError": "خطأ في حذف المنتج",
+            "requiredFields": "يرجى ملء جميع الحقول المطلوبة",
+            "updated": "تم تعديل المنتج بنجاح",
+            "created": "تم إنشاء المنتج بنجاح",
+            "saveError": "خطأ في الحفظ"
+        },
+        "noProductsFound": "لم يتم العثور على منتجات"
+    },
+    "customers": {
+        "title": "العملاء",
+        "subtitle": "إدارة قاعدة العملاء",
+        "newCustomer": "عميل جديد",
+        "searchPlaceholder": "البحث عن عميل...",
+        "table": {
+            "customer": "العميل",
+            "contact": "جهة الاتصال",
+            "address": "العنوان",
+            "identifiers": "المعرفات",
+            "actions": "الإجراءات"
+        },
+        "action": {
+            "newOrder": "طلب جديد",
+            "edit": "تعديل",
+            "delete": "حذف"
+        },
+        "dialog": {
+            "editTitle": "تعديل العميل",
+            "createTitle": "عميل جديد"
+        },
+        "form": {
+            "code": "الرمز *",
+            "name": "الاسم *",
+            "namePlaceholder": "اسم العميل",
+            "email": "البريد الإلكتروني",
+            "phone": "الهاتف",
+            "address": "العنوان",
+            "addressPlaceholder": "العنوان الكامل",
+            "city": "المدينة",
+            "postalCode": "الرمز البريدي",
+            "ice": "ICE",
+            "rc": "RC",
+            "cancel": "إلغاء",
+            "update": "تحديث",
+            "create": "إنشاء"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل العملاء",
+            "deleteConfirm": "هل أنت متأكد من حذف هذا العميل؟",
+            "deleted": "تم حذف العميل بنجاح",
+            "deleteError": "خطأ في حذف العميل",
+            "requiredFields": "الاسم والرمز مطلوبان",
+            "updated": "تم تحديث العميل بنجاح",
+            "created": "تم إنشاء العميل بنجاح",
+            "saveError": "خطأ في الحفظ"
+        },
+        "noCustomersFound": "لم يتم العثور على عملاء"
+    },
+    "deliveries": {
+        "title": "التوصيلات",
+        "subtitle": "إدارة وتتبع التوصيلات",
+        "newDelivery": "توصيل جديد",
+        "searchPlaceholder": "البحث عن توصيل...",
+        "allStatuses": "جميع الحالات",
+        "table": {
+            "order": "الطلب",
+            "customer": "العميل",
+            "date": "التاريخ",
+            "driver": "السائق",
+            "status": "الحالة",
+            "actions": "الإجراءات"
+        },
+        "action": {
+            "viewOrder": "عرض الطلب",
+            "trackOnMap": "تتبع على الخريطة",
+            "start": "بدء",
+            "complete": "إكمال"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل التوصيلات",
+            "statusUpdated": "تم تحديث الحالة"
+        },
+        "noDeliveriesFound": "لم يتم العثور على توصيلات"
+    },
+    "invoices": {
+        "title": "الفواتير",
+        "subtitle": "إدارة الفواتير ومدفوعات العملاء",
+        "newInvoice": "فاتورة جديدة",
+        "totalInvoices": "إجمالي الفواتير",
+        "paidInvoices": "فواتير مدفوعة",
+        "outstanding": "قيد الانتظار",
+        "searchPlaceholder": "البحث عن فاتورة...",
+        "allStatuses": "جميع الحالات",
+        "table": {
+            "invoiceNumber": "رقم الفاتورة",
+            "customer": "العميل",
+            "date": "التاريخ",
+            "amount": "المبلغ",
+            "remaining": "المتبقي",
+            "status": "الحالة",
+            "actions": "الإجراءات"
+        },
+        "action": {
+            "view": "عرض",
+            "downloadPdf": "تحميل PDF",
+            "send": "إرسال",
+            "markPaid": "تأكيد الدفع"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل الفواتير",
+            "statusUpdated": "تم تحديث الحالة"
+        },
+        "noInvoicesFound": "لم يتم العثور على فواتير"
+    },
+    "kanban": {
+        "title": "لوحة كانبان",
+        "subtitle": "إدارة المهام والتحقق بين الفرق",
+        "newTask": "مهمة جديدة",
+        "column": {
+            "todo": "للتنفيذ",
+            "pendingValidation": "في انتظار التحقق",
+            "validated": "تم التحقق",
+            "inProgress": "قيد التنفيذ",
+            "done": "مكتمل"
+        },
+        "priority": {
+            "all": "جميع الأولويات",
+            "low": "منخفضة",
+            "medium": "متوسطة",
+            "high": "عالية",
+            "urgent": "عاجلة"
+        },
+        "action": {
+            "markDone": "وضع علامة مكتمل",
+            "delete": "حذف"
+        },
+        "unassigned": "غير معين",
+        "form": {
+            "title": "العنوان *",
+            "titlePlaceholder": "عنوان المهمة",
+            "description": "الوصف",
+            "descPlaceholder": "وصف تفصيلي...",
+            "priority": "الأولوية",
+            "dueDate": "تاريخ الاستحقاق",
+            "assignedTo": "معين إلى",
+            "selectUser": "اختر مستخدماً",
+            "linkedOrder": "مرتبط بطلب",
+            "selectOrder": "اختر طلباً (اختياري)",
+            "cancel": "إلغاء",
+            "create": "إنشاء المهمة"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل المهام",
+            "moved": "تم نقل المهمة",
+            "moveError": "خطأ في نقل المهمة",
+            "deleteConfirm": "هل أنت متأكد من حذف هذه المهمة؟",
+            "deleted": "تم حذف المهمة",
+            "deleteError": "خطأ في حذف المهمة",
+            "created": "تم إنشاء المهمة بنجاح",
+            "createError": "خطأ في إنشاء المهمة",
+            "markedDone": "تم وضع علامة مكتمل على المهمة"
+        }
+    },
+    "vehicles": {
+        "title": "المركبات",
+        "subtitle": "إدارة أسطول المركبات",
+        "newVehicle": "مركبة جديدة",
+        "total": "الإجمالي",
+        "active": "نشطة",
+        "inactive": "غير نشطة",
+        "searchPlaceholder": "بحث بلوحة الترقيم، الماركة، الطراز...",
+        "statusAll": "الكل",
+        "statusActive": "نشطة",
+        "statusInactive": "غير نشطة",
+        "tableTitle": "قائمة المركبات ({{count}})",
+        "table": {
+            "plate": "لوحة الترقيم",
+            "brand": "الماركة",
+            "model": "الطراز",
+            "capacity": "السعة (لتر)",
+            "deliveries": "التوصيلات",
+            "status": "الحالة",
+            "actions": "الإجراءات"
+        },
+        "dialog": {
+            "editTitle": "تعديل المركبة",
+            "createTitle": "مركبة جديدة"
+        },
+        "form": {
+            "plate": "لوحة الترقيم *",
+            "brand": "الماركة *",
+            "model": "الطراز *",
+            "capacity": "السعة (لتر)",
+            "active": "نشطة",
+            "cancel": "إلغاء"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل المركبات",
+            "requiredFields": "يرجى ملء جميع الحقول المطلوبة",
+            "updated": "تم تعديل المركبة بنجاح",
+            "created": "تم إنشاء المركبة بنجاح",
+            "saveError": "خطأ في الحفظ",
+            "deleted": "تم حذف المركبة",
+            "deleteError": "خطأ في حذف المركبة",
+            "deactivated": "تم تعطيل المركبة",
+            "activated": "تم تفعيل المركبة",
+            "updateError": "خطأ في التحديث"
+        },
+        "noVehiclesFound": "لم يتم العثور على مركبات"
+    },
+    "careers": {
+        "title": "الوظائف",
+        "subtitle": "إدارة عروض العمل المنشورة على الموقع",
+        "newOffer": "عرض جديد",
+        "totalOffers": "إجمالي العروض",
+        "activeOffers": "نشطة",
+        "inactiveOffers": "غير نشطة",
+        "searchPlaceholder": "بحث بالعنوان، الموقع، القسم...",
+        "allStatuses": "جميع الحالات",
+        "filterActive": "نشطة",
+        "filterInactive": "غير نشطة",
+        "allTypes": "جميع الأنواع",
+        "tableTitle": "قائمة العروض ({{count}})",
+        "table": {
+            "title": "العنوان",
+            "location": "الموقع",
+            "type": "النوع",
+            "department": "القسم",
+            "status": "الحالة",
+            "date": "التاريخ",
+            "actions": "الإجراءات"
+        },
+        "statusActive": "نشط",
+        "statusInactive": "غير نشط",
+        "action": {
+            "view": "عرض",
+            "edit": "تعديل",
+            "deactivate": "تعطيل",
+            "activate": "تفعيل",
+            "delete": "حذف"
+        },
+        "dialog": {
+            "editTitle": "تعديل العرض",
+            "createTitle": "عرض عمل جديد"
+        },
+        "form": {
+            "jobTitle": "المسمى الوظيفي *",
+            "location": "الموقع *",
+            "contractType": "نوع العقد *",
+            "department": "القسم",
+            "deptPlaceholder": "مثال: اللوجستية، المبيعات، الموارد البشرية...",
+            "description": "الوصف *",
+            "descPlaceholder": "صف الوظيفة والمهام، إلخ.",
+            "requirements": "المتطلبات",
+            "reqPlaceholder": "الخبرة المطلوبة، المهارات، الشهادات...",
+            "contactEmail": "البريد الإلكتروني للتواصل",
+            "activeLabel": "نشط (مرئي على الموقع)",
+            "cancel": "إلغاء"
+        },
+        "viewDialog": {
+            "description": "الوصف",
+            "requirements": "المتطلبات",
+            "contact": "التواصل:",
+            "createdAt": "تاريخ الإنشاء",
+            "updatedAt": "تاريخ التعديل"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل العروض",
+            "requiredFields": "يرجى ملء جميع الحقول المطلوبة",
+            "updated": "تم تعديل العرض بنجاح",
+            "created": "تم إنشاء العرض بنجاح",
+            "saveError": "خطأ في الحفظ",
+            "deleted": "تم حذف العرض",
+            "deleteError": "خطأ في حذف العرض",
+            "deactivated": "تم تعطيل العرض",
+            "activated": "تم تفعيل العرض",
+            "updateError": "خطأ في التحديث"
+        },
+        "noOffersFound": "لم يتم العثور على عروض"
+    },
+    "users": {
+        "title": "المستخدمون",
+        "subtitle": "إدارة المستخدمين وصلاحياتهم",
+        "newUser": "مستخدم جديد",
+        "searchPlaceholder": "البحث عن مستخدم...",
+        "allRoles": "جميع الأدوار",
+        "roleAdmin": "مدير",
+        "roleCommercial": "تجاري",
+        "roleChauffeur": "سائق",
+        "roleManager": "مسؤول",
+        "roleUser": "مستخدم",
+        "table": {
+            "user": "المستخدم",
+            "role": "الدور",
+            "contact": "جهة الاتصال",
+            "status": "الحالة",
+            "actions": "الإجراءات"
+        },
+        "noPhone": "غير محدد",
+        "dialog": {
+            "createTitle": "مستخدم جديد",
+            "editTitle": "تعديل المستخدم"
+        },
+        "form": {
+            "fullName": "الاسم الكامل *",
+            "fullNamePlaceholder": "الاسم الأول والأخير",
+            "email": "البريد الإلكتروني *",
+            "password": "كلمة المرور *",
+            "editPassword": "كلمة مرور جديدة (اتركها فارغة للإبقاء على الحالية)",
+            "phone": "الهاتف",
+            "role": "الدور *",
+            "cancel": "إلغاء",
+            "create": "إنشاء المستخدم"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل المستخدمين",
+            "deleteConfirm": "هل أنت متأكد من حذف هذا المستخدم؟",
+            "deleted": "تم حذف المستخدم",
+            "deleteError": "خطأ في حذف المستخدم",
+            "statusUpdated": "تم تحديث الحالة",
+            "statusError": "خطأ في تحديث الحالة",
+            "created": "تم إنشاء المستخدم بنجاح",
+            "updated": "تم تعديل المستخدم بنجاح",
+            "passwordRequired": "كلمة المرور مطلوبة",
+            "saveError": "خطأ في الحفظ"
+        },
+        "noUsersFound": "لم يتم العثور على مستخدمين"
+    },
+    "reports": {
+        "title": "التقارير",
+        "subtitle": "تحليل أداء الشركة",
+        "period": {
+            "week": "هذا الأسبوع",
+            "month": "هذا الشهر",
+            "quarter": "هذا الربع",
+            "year": "هذه السنة"
+        },
+        "type": {
+            "sales": "المبيعات",
+            "products": "المنتجات",
+            "customers": "العملاء",
+            "deliveries": "التوصيلات"
+        },
+        "revenue": "الإيرادات",
+        "orders": "الطلبات",
+        "averageBasket": "متوسط السلة",
+        "activeCustomers": "العملاء النشطون",
+        "salesChart": "تطور المبيعات",
+        "categoryChart": "المبيعات حسب الفئة",
+        "topCustomers": "أفضل العملاء",
+        "table": {
+            "customer": "العميل",
+            "orders": "الطلبات",
+            "amount": "المبلغ",
+            "revenuePercent": "% من الإيرادات"
+        },
+        "toast": {
+            "exported": "تم تصدير التقرير",
+            "loadError": "خطأ في تحميل التقارير"
+        }
+    },
+    "tracking": {
+        "title": "تتبع التوصيلات",
+        "subtitle": "عرض مواقع التوصيلات في الوقت الحقيقي",
+        "refresh": "تحديث",
+        "deliveriesTitle": "التوصيلات",
+        "filterAll": "الكل",
+        "filterPlanned": "مخططة",
+        "filterInProgress": "قيد التنفيذ",
+        "filterCompleted": "مكتملة",
+        "noDeliveries": "لم يتم العثور على توصيلات",
+        "route": "المسار",
+        "call": "اتصال",
+        "totalDeliveries": "إجمالي التوصيلات",
+        "inProgress": "قيد التنفيذ",
+        "completedToday": "مكتملة اليوم",
+        "planned": "مخططة",
+        "toast": {
+            "loadError": "خطأ في تحميل التوصيلات"
+        }
+    },
+    "calendar": {
+        "title": "جدول التوصيلات",
+        "subtitle": "عرض وتخطيط التوصيلات",
+        "calendarView": "التقويم",
+        "listView": "القائمة",
+        "newDelivery": "توصيل جديد",
+        "legendPlanned": "مخطط",
+        "legendInProgress": "قيد التنفيذ",
+        "legendCompleted": "مكتمل",
+        "today": "اليوم",
+        "month": "الشهر",
+        "week": "الأسبوع",
+        "day": "اليوم",
+        "listTitle": "قائمة التوصيلات",
+        "noDeliveries": "لا توجد توصيلات مخططة",
+        "detailTitle": "تفاصيل التوصيل",
+        "client": "العميل",
+        "plannedDate": "التاريخ المخطط",
+        "driver": "السائق",
+        "vehicle": "المركبة",
+        "notes": "ملاحظات",
+        "start": "بدء",
+        "complete": "إكمال",
+        "dialog": {
+            "editTitle": "تعديل التوصيل",
+            "createTitle": "توصيل جديد"
+        },
+        "form": {
+            "order": "الطلب *",
+            "selectOrder": "اختر طلباً",
+            "driver": "السائق *",
+            "selectDriver": "اختر سائقاً",
+            "vehicle": "المركبة *",
+            "selectVehicle": "اختر مركبة",
+            "plannedDate": "التاريخ المخطط *",
+            "notes": "ملاحظات",
+            "notesPlaceholder": "ملاحظات اختيارية...",
+            "cancel": "إلغاء"
+        },
+        "toast": {
+            "loadError": "خطأ في تحميل التوصيلات",
+            "requiredFields": "يرجى ملء جميع الحقول المطلوبة",
+            "updated": "تم تعديل التوصيل بنجاح",
+            "created": "تم إنشاء التوصيل بنجاح",
+            "selectOrder": "يرجى اختيار طلب",
+            "saveError": "خطأ في الحفظ",
+            "statusUpdated": "تم تحديث الحالة",
+            "statusError": "خطأ في تغيير الحالة",
+            "deleteConfirm": "حذف هذا التوصيل؟",
+            "deleted": "تم حذف التوصيل",
+            "deleteError": "خطأ في الحذف"
+        }
+    },
+    "notifications": {
+        "title": "الإشعارات",
+        "markAllRead": "تحديد الكل كمقروء",
+        "empty": "لا توجد إشعارات",
+        "clearAll": "مسح جميع الإشعارات",
+        "timeNow": "الآن",
+        "timeMinutes": "منذ {{count}} دقيقة",
+        "timeHours": "منذ {{count}} ساعة",
+        "timeDays": "منذ {{count}} يوم"
+    }
+}

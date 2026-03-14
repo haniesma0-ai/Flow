@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+docker-compose.yml
+Dockerfile
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment (will be passed via build args)
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+
+# Documentation
+*.md
+LICENSE
+
+# Misc
+*.sql
+Makefile
+install.sh

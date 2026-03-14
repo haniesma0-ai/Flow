@@ -1,0 +1,65 @@
+# ============================================
+# Docker Compose - 
+# ============================================
+
+version: '3.8'
+
+services:
+  # Frontend React
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: FoxPetroleum-frontend
+    ports:
+      - "8080:80"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api
+    networks:
+      - lubriflow-network
+    restart: unless-stopped
+
+  # Optionnel : Backend Laravel
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: lubriflow-backend
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - APP_ENV=local
+  #     - APP_DEBUG=true
+  #     - DB_HOST=mysql
+  #     - DB_DATABASE=lubriflow
+  #     - DB_USERNAME=root
+  #     - DB_PASSWORD=secret
+  #   volumes:
+  #     - ./backend:/var/www/html
+  #   networks:
+  #     - lubriflow-network
+  #   depends_on:
+  #     - mysql
+  #   restart: unless-stopped
+
+  # Optionnel : Base de données MySQL
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: lubriflow-mysql
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=secret
+  #     - MYSQL_DATABASE=lubriflow
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #   ports:
+  #     - "3306:3306"
+  #   networks:
+  #     - lubriflow-network
+  #   restart: unless-stopped
+
+networks:
+  lubriflow-network:
+    driver: bridge
+
+# volumes:
+#   mysql-data:

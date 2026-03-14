@@ -1,0 +1,50 @@
+# Dependencies
+vendor/
+node_modules/
+front/node_modules/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+docker-compose.yml
+front/docker-compose.yml
+front/Dockerfile
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs & cache
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Tests
+tests/
+phpunit.xml
+.phpunit.result.cache
+
+# Frontend (built separately)
+front/
+
+# Database files
+*.sql
+
+# Documentation
+*.md
+LICENSE

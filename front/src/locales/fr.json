@@ -1,0 +1,827 @@
+{
+    "common": {
+        "save": "Enregistrer",
+        "saving": "Sauvegarde...",
+        "cancel": "Annuler",
+        "create": "Créer",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "view": "Voir",
+        "viewAll": "Voir tout",
+        "search": "Rechercher...",
+        "export": "Exporter",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "activate": "Activer",
+        "deactivate": "Désactiver",
+        "status": "Statut",
+        "actions": "Actions",
+        "print": "Imprimer",
+        "close": "Fermer",
+        "loading": "Chargement...",
+        "all": "Tous",
+        "yes": "Oui",
+        "no": "Non",
+        "confirm": "Confirmer",
+        "back": "Retour"
+    },
+    "status": {
+        "draft": "Brouillon",
+        "confirmed": "Confirmée",
+        "preparation": "Préparation",
+        "delivery": "Livraison",
+        "delivered": "Livrée",
+        "cancelled": "Annulée",
+        "planned": "Planifiée",
+        "inProgress": "En cours",
+        "completed": "Terminée",
+        "sent": "Envoyée",
+        "paid": "Payée",
+        "overdue": "En retard"
+    },
+    "nav": {
+        "dashboard": "Tableau de bord",
+        "orders": "Commandes",
+        "catalog": "Catalogue",
+        "myOrders": "Mes Commandes",
+        "products": "Produits",
+        "customers": "Clients",
+        "deliveries": "Livraisons",
+        "invoices": "Factures",
+        "kanban": "Kanban",
+        "calendar": "Planning",
+        "tracking": "Suivi GPS",
+        "reports": "Rapports",
+        "vehicles": "Véhicules",
+        "careers": "Carrières",
+        "users": "Utilisateurs",
+        "settings": "Paramètres",
+        "profile": "Mon Profil"
+    },
+    "layout": {
+        "logout": "Déconnexion",
+        "search": "Rechercher..."
+    },
+    "login": {
+        "brand": "FoxPetroleum",
+        "tagline": "Distribution de Lubrifiants",
+        "welcome": "Bienvenue sur votre espace de travail",
+        "description": "Connectez-vous pour accéder à votre tableau de bord, gérer vos commandes et suivre vos livraisons en temps réel.",
+        "title": "Connexion",
+        "subtitle": "Entrez vos identifiants pour accéder à votre compte",
+        "emailLabel": "Adresse email",
+        "emailPlaceholder": "nom@entreprise.com",
+        "passwordLabel": "Mot de passe",
+        "rememberMe": "Se souvenir de moi",
+        "forgotPassword": "Mot de passe oublié ?",
+        "loggingIn": "Connexion...",
+        "submit": "Se connecter",
+        "noAccount": "Pas encore de compte ?",
+        "register": "S'inscrire"
+    },
+    "register": {
+        "title": "Créer un compte",
+        "name": "Nom",
+        "email": "Email",
+        "password": "Mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "submitting": "Inscription...",
+        "submit": "S'inscrire",
+        "hasAccount": "Déjà un compte ?",
+        "login": "Se connecter",
+        "toast": {
+            "success": "Inscription réussie, veuillez vous connecter.",
+            "error": "Erreur lors de l'inscription"
+        }
+    },
+    "settings": {
+        "title": "Paramètres",
+        "subtitle": "Configurez les paramètres de l'application",
+        "tabs": {
+            "company": "Entreprise",
+            "profile": "Profil",
+            "notifications": "Notifications",
+            "security": "Sécurité"
+        },
+        "company": {
+            "title": "Informations de l'entreprise",
+            "name": "Nom de l'entreprise",
+            "ice": "ICE",
+            "email": "Email",
+            "phone": "Téléphone",
+            "address": "Adresse",
+            "financialTitle": "Paramètres financiers",
+            "tva": "TVA par défaut (%)",
+            "currency": "Devise",
+            "currencyMAD": "MAD - Dirham marocain",
+            "currencyEUR": "EUR - Euro",
+            "currencyUSD": "USD - Dollar américain",
+            "paymentDelay": "Délai de paiement (jours)"
+        },
+        "profile": {
+            "title": "Informations personnelles",
+            "fullName": "Nom complet",
+            "email": "Email",
+            "phone": "Téléphone",
+            "language": "Langue"
+        },
+        "notifications": {
+            "title": "Préférences de notification",
+            "newOrders": "Nouvelles commandes",
+            "newOrdersDesc": "Recevoir une notification lors d'une nouvelle commande",
+            "deliveriesComplete": "Livraisons terminées",
+            "deliveriesCompleteDesc": "Être notifié quand une livraison est terminée",
+            "lowStock": "Stock critique",
+            "lowStockDesc": "Alerte lorsque le stock d'un produit est critique",
+            "paymentsReceived": "Paiements reçus",
+            "paymentsReceivedDesc": "Notification lors de la réception d'un paiement",
+            "overdueInvoices": "Factures en retard",
+            "overdueInvoicesDesc": "Rappel pour les factures impayées"
+        },
+        "security": {
+            "changePassword": "Changer le mot de passe",
+            "currentPassword": "Mot de passe actuel",
+            "newPassword": "Nouveau mot de passe",
+            "confirmPassword": "Confirmer le nouveau mot de passe",
+            "twoFactorTitle": "Authentification à deux facteurs",
+            "enable2fa": "Activer la 2FA",
+            "enable2faDesc": "Sécurisez votre compte avec une authentification supplémentaire"
+        },
+        "toast": {
+            "companySaved": "Paramètres de l'entreprise enregistrés",
+            "profileSaved": "Profil mis à jour avec succès",
+            "profileError": "Erreur lors de la mise à jour",
+            "passwordMismatch": "Les mots de passe ne correspondent pas",
+            "passwordTooShort": "Le mot de passe doit faire au moins 8 caractères",
+            "passwordChanged": "Mot de passe modifié avec succès",
+            "passwordError": "Erreur lors du changement de mot de passe",
+            "notificationsSaved": "Préférences de notification enregistrées"
+        }
+    },
+    "adminDashboard": {
+        "title": "Tableau de bord Administrateur",
+        "subtitle": "Vue d'ensemble de l'activité de l'entreprise",
+        "newOrder": "Nouvelle commande",
+        "stats": {
+            "totalOrders": "Total Commandes",
+            "revenue": "Chiffre d'affaires",
+            "customers": "Clients",
+            "products": "Produits",
+            "vsLastMonth": "vs mois dernier"
+        },
+        "lowStock": "{{count}} produits en stock critique",
+        "lowStockAction": "Réapprovisionnement nécessaire",
+        "overdueInvoices": "{{count}} factures en retard",
+        "overdueInvoicesAction": "Relance client nécessaire",
+        "revenueChart": "Chiffre d'affaires mensuel",
+        "orderStatusChart": "Commandes par statut",
+        "recentOrders": "Commandes récentes",
+        "topProducts": "Produits les plus vendus",
+        "units": "unités",
+        "toast": {
+            "loadError": "Erreur lors du chargement du tableau de bord"
+        }
+    },
+    "commercialDashboard": {
+        "title": "Tableau de bord Commercial",
+        "subtitle": "Voici un aperçu de votre activité commerciale",
+        "newOrder": "Nouvelle commande",
+        "myOrders": "Mes commandes",
+        "pending": "En attente",
+        "pendingAction": "À traiter",
+        "myCustomers": "Mes clients",
+        "newCustomers": "nouveaux",
+        "deliveriesToday": "Livraisons aujourd'hui",
+        "inProgress": "2 en cours",
+        "thisMonth": "ce mois",
+        "lowStockAlert": "{{count}} produit(s) en stock critique",
+        "lowStockDesc": "Certains produits nécessitent un réapprovisionnement urgent",
+        "viewProducts": "Voir les produits",
+        "monthlyActivity": "Mon activité mensuelle",
+        "chartOrders": "Commandes",
+        "chartRevenue": "CA (MAD)",
+        "recentOrders": "Mes dernières commandes",
+        "quickActions": "Actions rapides",
+        "actionNewOrder": "Nouvelle commande",
+        "actionKanban": "Tâches Kanban",
+        "actionDelivery": "Planning livraisons",
+        "actionNewCustomer": "Nouveau client",
+        "toast": {
+            "loadError": "Erreur lors du chargement du tableau de bord"
+        }
+    },
+    "chauffeurDashboard": {
+        "title": "Espace Chauffeur",
+        "subtitle": "Gérez vos livraisons du jour",
+        "online": "En ligne",
+        "offline": "Hors ligne",
+        "today": "Aujourd'hui",
+        "pending": "En attente",
+        "inProgress": "En cours",
+        "completed": "Terminées",
+        "currentDelivery": "Livraison en cours",
+        "statusInDelivery": "En livraison",
+        "route": "Itinéraire",
+        "finish": "Terminer",
+        "pendingDeliveries": "Livraisons à effectuer",
+        "planned": "Planifiée",
+        "start": "Démarrer",
+        "completedDeliveries": "Livraisons terminées",
+        "statusDelivered": "Livrée",
+        "offlineMode": "Mode hors ligne activé",
+        "offlineDesc": "Vos actions seront synchronisées dès le retour de la connexion",
+        "deliveryMap": "Carte des livraisons",
+        "goOffline": "Passer hors ligne",
+        "goOnline": "Passer en ligne",
+        "toast": {
+            "started": "Livraison démarrée",
+            "startError": "Erreur lors du démarrage de la livraison",
+            "completed": "Livraison terminée",
+            "completeError": "Erreur lors de la complétion de la livraison",
+            "loadError": "Erreur lors du chargement des livraisons"
+        }
+    },
+    "clientDashboard": {
+        "welcome": "Bienvenue, {{name}}",
+        "subtitle": "Voici un résumé de vos commandes",
+        "totalOrders": "Total commandes",
+        "inProgress": "En cours",
+        "delivered": "Livrées",
+        "totalSpent": "Total dépensé",
+        "recentOrders": "Mes commandes récentes",
+        "noOrders": "Aucune commande pour le moment",
+        "toast": {
+            "loadError": "Erreur lors du chargement du tableau de bord"
+        }
+    },
+    "orders": {
+        "title": "Commandes",
+        "subtitle": "Gérez les commandes clients",
+        "newOrder": "Nouvelle commande",
+        "searchPlaceholder": "Rechercher par N° ou client...",
+        "filterStatus": "Filtrer par statut",
+        "allStatuses": "Tous les statuts",
+        "table": {
+            "orderNumber": "N° Commande",
+            "customer": "Client",
+            "date": "Date",
+            "total": "Total",
+            "status": "Statut",
+            "actions": "Actions"
+        },
+        "action": {
+            "viewDetails": "Voir détails",
+            "edit": "Modifier",
+            "startPreparation": "Mettre en préparation",
+            "startDelivery": "Lancer la livraison",
+            "markDelivered": "Marquer livrée",
+            "delete": "Supprimer"
+        },
+        "confirm": {
+            "delete": "Êtes-vous sûr de vouloir supprimer cette commande ?"
+        },
+        "toast": {
+            "deleted": "Commande supprimée avec succès",
+            "deleteError": "Erreur lors de la suppression",
+            "statusUpdated": "Statut mis à jour",
+            "statusError": "Erreur lors de la mise à jour du statut",
+            "loadError": "Erreur lors du chargement des commandes",
+            "created": "Commande créée avec succès",
+            "createError": "Erreur lors de la création de la commande"
+        },
+        "noOrdersFound": "Aucune commande trouvée",
+        "notFound": "Commande non trouvée",
+        "backToOrders": "Retour aux commandes",
+        "action": {
+            "viewDetails": "Voir détails",
+            "edit": "Modifier",
+            "startPreparation": "Mettre en préparation",
+            "startDelivery": "Lancer la livraison",
+            "markDelivered": "Marquer livrée",
+            "delete": "Supprimer",
+            "confirm": "Confirmer"
+        },
+        "form": {
+            "customer": "Client",
+            "selectCustomer": "Sélectionner un client",
+            "products": "Produits",
+            "add": "Ajouter",
+            "product": "Produit",
+            "notes": "Notes",
+            "notesPlaceholder": "Notes additionnelles...",
+            "estimatedTotal": "Total estimé",
+            "cancel": "Annuler",
+            "createOrder": "Créer la commande",
+            "dataError": "Erreur lors du chargement des données",
+            "editOrder": "Modifier la commande",
+            "editOrderSubtitle": "Modifiez les détails de la commande",
+            "newOrderSubtitle": "Remplissez les informations pour créer une commande",
+            "generalInfo": "Informations générales",
+            "deliveryDate": "Date de livraison souhaitée",
+            "quantity": "Quantité",
+            "unitPrice": "Prix unitaire",
+            "totalHT": "Total HT",
+            "selectProduct": "Sélectionnez un produit",
+            "subtotalHT": "Sous-total HT",
+            "tva": "TVA",
+            "totalTTC": "Total TTC",
+            "addProductError": "Veuillez ajouter au moins un produit"
+        },
+        "detail": {
+            "createdOn": "Créée le",
+            "orderedItems": "Articles commandés",
+            "delivery": "Livraison",
+            "scheduledFor": "Prévue le",
+            "noDeliveryPlanned": "Aucune livraison planifiée",
+            "commercial": "Commercial",
+            "unassigned": "Non assigné"
+        }
+    },
+    "products": {
+        "title": "Produits",
+        "subtitle": "Gérez votre catalogue de produits et stocks",
+        "newProduct": "Nouveau produit",
+        "lowStockAlert": "{{count}} produit(s) en stock critique",
+        "lowStockDesc": "Certains produits nécessitent un réapprovisionnement",
+        "searchPlaceholder": "Rechercher un produit...",
+        "category": "Catégorie",
+        "allCategories": "Toutes les catégories",
+        "lowStockFilter": "Stock critique",
+        "stock": {
+            "outOfStock": "Rupture",
+            "critical": "Critique",
+            "low": "Faible",
+            "ok": "OK",
+            "label": "Stock",
+            "min": "Min:"
+        },
+        "action": {
+            "edit": "Modifier",
+            "delete": "Supprimer"
+        },
+        "dialog": {
+            "editTitle": "Modifier le produit",
+            "createTitle": "Nouveau produit"
+        },
+        "form": {
+            "code": "Code *",
+            "category": "Catégorie",
+            "name": "Nom *",
+            "description": "Description",
+            "descPlaceholder": "Description du produit...",
+            "price": "Prix *",
+            "tva": "TVA (%)",
+            "unit": "Unité *",
+            "stock": "Stock",
+            "minStock": "Stock minimum",
+            "active": "Actif",
+            "cancel": "Annuler"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des produits",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce produit ?",
+            "deleted": "Produit supprimé avec succès",
+            "deleteError": "Erreur lors de la suppression du produit",
+            "requiredFields": "Veuillez remplir tous les champs obligatoires",
+            "updated": "Produit modifié avec succès",
+            "created": "Produit créé avec succès",
+            "saveError": "Erreur lors de la sauvegarde"
+        },
+        "noProductsFound": "Aucun produit trouvé"
+    },
+    "customers": {
+        "title": "Clients",
+        "subtitle": "Gérez votre base de clients",
+        "newCustomer": "Nouveau client",
+        "searchPlaceholder": "Rechercher un client...",
+        "table": {
+            "customer": "Client",
+            "contact": "Contact",
+            "address": "Adresse",
+            "identifiers": "Identifiants",
+            "actions": "Actions"
+        },
+        "action": {
+            "newOrder": "Nouvelle commande",
+            "edit": "Modifier",
+            "delete": "Supprimer"
+        },
+        "dialog": {
+            "editTitle": "Modifier le client",
+            "createTitle": "Nouveau client"
+        },
+        "form": {
+            "code": "Code *",
+            "name": "Nom *",
+            "namePlaceholder": "Nom du client",
+            "email": "Email",
+            "phone": "Téléphone",
+            "address": "Adresse",
+            "addressPlaceholder": "Adresse complète",
+            "city": "Ville",
+            "postalCode": "Code postal",
+            "ice": "ICE",
+            "rc": "RC",
+            "cancel": "Annuler",
+            "update": "Mettre à jour",
+            "create": "Créer"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des clients",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce client ?",
+            "deleted": "Client supprimé avec succès",
+            "deleteError": "Erreur lors de la suppression du client",
+            "requiredFields": "Le nom et le code sont obligatoires",
+            "updated": "Client mis à jour avec succès",
+            "created": "Client créé avec succès",
+            "saveError": "Erreur lors de la sauvegarde"
+        },
+        "noCustomersFound": "Aucun client trouvé"
+    },
+    "deliveries": {
+        "title": "Livraisons",
+        "subtitle": "Gérez et suivez les livraisons",
+        "newDelivery": "Nouvelle livraison",
+        "searchPlaceholder": "Rechercher une livraison...",
+        "allStatuses": "Tous les statuts",
+        "table": {
+            "order": "Commande",
+            "customer": "Client",
+            "date": "Date",
+            "driver": "Chauffeur",
+            "status": "Statut",
+            "actions": "Actions"
+        },
+        "action": {
+            "viewOrder": "Voir commande",
+            "trackOnMap": "Suivre sur la carte",
+            "start": "Démarrer",
+            "complete": "Terminer"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des livraisons",
+            "statusUpdated": "Statut mis à jour"
+        },
+        "noDeliveriesFound": "Aucune livraison trouvée"
+    },
+    "invoices": {
+        "title": "Factures",
+        "subtitle": "Gérez les factures et paiements clients",
+        "newInvoice": "Nouvelle facture",
+        "totalInvoices": "Total factures",
+        "paidInvoices": "Factures payées",
+        "outstanding": "En attente",
+        "searchPlaceholder": "Rechercher une facture...",
+        "allStatuses": "Tous les statuts",
+        "table": {
+            "invoiceNumber": "N° Facture",
+            "customer": "Client",
+            "date": "Date",
+            "amount": "Montant",
+            "remaining": "Restant",
+            "status": "Statut",
+            "actions": "Actions"
+        },
+        "action": {
+            "view": "Voir",
+            "downloadPdf": "Télécharger PDF",
+            "send": "Envoyer",
+            "markPaid": "Marquer payée"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des factures",
+            "statusUpdated": "Statut mis à jour"
+        },
+        "noInvoicesFound": "Aucune facture trouvée"
+    },
+    "kanban": {
+        "title": "Tableau Kanban",
+        "subtitle": "Gérez les tâches et validations entre équipes",
+        "newTask": "Nouvelle tâche",
+        "column": {
+            "todo": "À faire",
+            "pendingValidation": "En attente validation",
+            "validated": "Validé",
+            "inProgress": "En cours",
+            "done": "Terminé"
+        },
+        "priority": {
+            "all": "Toutes priorités",
+            "low": "Basse",
+            "medium": "Moyenne",
+            "high": "Haute",
+            "urgent": "Urgente"
+        },
+        "action": {
+            "markDone": "Marquer comme terminée",
+            "delete": "Supprimer"
+        },
+        "unassigned": "Non assigné",
+        "form": {
+            "title": "Titre *",
+            "titlePlaceholder": "Titre de la tâche",
+            "description": "Description",
+            "descPlaceholder": "Description détaillée...",
+            "priority": "Priorité",
+            "dueDate": "Date d'échéance",
+            "assignedTo": "Assigné à",
+            "selectUser": "Sélectionner un utilisateur",
+            "linkedOrder": "Lié à une commande",
+            "selectOrder": "Sélectionner une commande (optionnel)",
+            "cancel": "Annuler",
+            "create": "Créer la tâche"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des tâches",
+            "moved": "Tâche déplacée",
+            "moveError": "Erreur lors du déplacement de la tâche",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette tâche ?",
+            "deleted": "Tâche supprimée",
+            "deleteError": "Erreur lors de la suppression",
+            "created": "Tâche créée avec succès",
+            "createError": "Erreur lors de la création de la tâche",
+            "markedDone": "Tâche marquée comme terminée"
+        }
+    },
+    "vehicles": {
+        "title": "Véhicules",
+        "subtitle": "Gérez la flotte de véhicules",
+        "newVehicle": "Nouveau véhicule",
+        "total": "Total",
+        "active": "Actifs",
+        "inactive": "Inactifs",
+        "searchPlaceholder": "Rechercher par immatriculation, marque, modèle...",
+        "statusAll": "Tous",
+        "statusActive": "Actifs",
+        "statusInactive": "Inactifs",
+        "tableTitle": "Liste des véhicules ({{count}})",
+        "table": {
+            "plate": "Immatriculation",
+            "brand": "Marque",
+            "model": "Modèle",
+            "capacity": "Capacité (L)",
+            "deliveries": "Livraisons",
+            "status": "Statut",
+            "actions": "Actions"
+        },
+        "dialog": {
+            "editTitle": "Modifier le véhicule",
+            "createTitle": "Nouveau véhicule"
+        },
+        "form": {
+            "plate": "Immatriculation *",
+            "brand": "Marque *",
+            "model": "Modèle *",
+            "capacity": "Capacité (litres)",
+            "active": "Actif",
+            "cancel": "Annuler"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des véhicules",
+            "requiredFields": "Veuillez remplir tous les champs obligatoires",
+            "updated": "Véhicule modifié avec succès",
+            "created": "Véhicule créé avec succès",
+            "saveError": "Erreur lors de la sauvegarde",
+            "deleted": "Véhicule supprimé",
+            "deleteError": "Erreur lors de la suppression",
+            "deactivated": "Véhicule désactivé",
+            "activated": "Véhicule activé",
+            "updateError": "Erreur lors de la mise à jour"
+        },
+        "noVehiclesFound": "Aucun véhicule trouvé"
+    },
+    "careers": {
+        "title": "Carrières",
+        "subtitle": "Gérez les offres d'emploi publiées sur le site",
+        "newOffer": "Nouvelle offre",
+        "totalOffers": "Total offres",
+        "activeOffers": "Actives",
+        "inactiveOffers": "Inactives",
+        "searchPlaceholder": "Rechercher par titre, lieu, département...",
+        "allStatuses": "Tous les statuts",
+        "filterActive": "Actives",
+        "filterInactive": "Inactives",
+        "allTypes": "Tous les types",
+        "tableTitle": "Liste des offres ({{count}})",
+        "table": {
+            "title": "Titre",
+            "location": "Lieu",
+            "type": "Type",
+            "department": "Département",
+            "status": "Statut",
+            "date": "Date",
+            "actions": "Actions"
+        },
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "action": {
+            "view": "Voir",
+            "edit": "Modifier",
+            "deactivate": "Désactiver",
+            "activate": "Activer",
+            "delete": "Supprimer"
+        },
+        "dialog": {
+            "editTitle": "Modifier l'offre",
+            "createTitle": "Nouvelle offre d'emploi"
+        },
+        "form": {
+            "jobTitle": "Titre du poste *",
+            "location": "Lieu *",
+            "contractType": "Type de contrat *",
+            "department": "Département",
+            "deptPlaceholder": "Ex: Logistique, Commercial, RH...",
+            "description": "Description *",
+            "descPlaceholder": "Décrivez le poste, les missions, etc.",
+            "requirements": "Prérequis",
+            "reqPlaceholder": "Expérience requise, compétences, diplômes...",
+            "contactEmail": "Email de contact",
+            "activeLabel": "Active (visible sur le site)",
+            "cancel": "Annuler"
+        },
+        "viewDialog": {
+            "description": "Description",
+            "requirements": "Prérequis",
+            "contact": "Contact :",
+            "createdAt": "Créée le",
+            "updatedAt": "Modifiée le"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des offres",
+            "requiredFields": "Veuillez remplir tous les champs obligatoires",
+            "updated": "Offre modifiée avec succès",
+            "created": "Offre créée avec succès",
+            "saveError": "Erreur lors de la sauvegarde",
+            "deleted": "Offre supprimée",
+            "deleteError": "Erreur lors de la suppression",
+            "deactivated": "Offre désactivée",
+            "activated": "Offre activée",
+            "updateError": "Erreur lors de la mise à jour"
+        },
+        "noOffersFound": "Aucune offre trouvée"
+    },
+    "users": {
+        "title": "Utilisateurs",
+        "subtitle": "Gérez les utilisateurs et leurs permissions",
+        "newUser": "Nouvel utilisateur",
+        "searchPlaceholder": "Rechercher un utilisateur...",
+        "allRoles": "Tous les rôles",
+        "roleAdmin": "Administrateur",
+        "roleCommercial": "Commercial",
+        "roleChauffeur": "Chauffeur",
+        "roleManager": "Manager",
+        "roleUser": "Utilisateur",
+        "table": {
+            "user": "Utilisateur",
+            "role": "Rôle",
+            "contact": "Contact",
+            "status": "Statut",
+            "actions": "Actions"
+        },
+        "noPhone": "Non renseigné",
+        "dialog": {
+            "createTitle": "Nouvel utilisateur",
+            "editTitle": "Modifier l'utilisateur"
+        },
+        "form": {
+            "fullName": "Nom complet *",
+            "fullNamePlaceholder": "Prénom et nom",
+            "email": "Email *",
+            "password": "Mot de passe *",
+            "editPassword": "Nouveau mot de passe (laisser vide pour ne pas changer)",
+            "phone": "Téléphone",
+            "role": "Rôle *",
+            "cancel": "Annuler",
+            "create": "Créer l'utilisateur"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des utilisateurs",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+            "deleted": "Utilisateur supprimé",
+            "deleteError": "Erreur lors de la suppression",
+            "statusUpdated": "Statut mis à jour",
+            "statusError": "Erreur lors de la mise à jour du statut",
+            "created": "Utilisateur créé avec succès",
+            "updated": "Utilisateur modifié avec succès",
+            "passwordRequired": "Le mot de passe est requis",
+            "saveError": "Erreur lors de la sauvegarde"
+        },
+        "noUsersFound": "Aucun utilisateur trouvé"
+    },
+    "reports": {
+        "title": "Rapports",
+        "subtitle": "Analysez les performances de l'entreprise",
+        "period": {
+            "week": "Cette semaine",
+            "month": "Ce mois",
+            "quarter": "Ce trimestre",
+            "year": "Cette année"
+        },
+        "type": {
+            "sales": "Ventes",
+            "products": "Produits",
+            "customers": "Clients",
+            "deliveries": "Livraisons"
+        },
+        "revenue": "Chiffre d'affaires",
+        "orders": "Commandes",
+        "averageBasket": "Panier moyen",
+        "activeCustomers": "Clients actifs",
+        "salesChart": "Évolution des ventes",
+        "categoryChart": "Ventes par catégorie",
+        "topCustomers": "Top clients",
+        "table": {
+            "customer": "Client",
+            "orders": "Commandes",
+            "amount": "Montant",
+            "revenuePercent": "% du CA"
+        },
+        "toast": {
+            "exported": "Rapport exporté",
+            "loadError": "Erreur lors du chargement des rapports"
+        }
+    },
+    "tracking": {
+        "title": "Suivi des livraisons",
+        "subtitle": "Visualisez la position des livraisons en temps réel",
+        "refresh": "Actualiser",
+        "deliveriesTitle": "Livraisons",
+        "filterAll": "Tous",
+        "filterPlanned": "Planifiées",
+        "filterInProgress": "En cours",
+        "filterCompleted": "Terminées",
+        "noDeliveries": "Aucune livraison trouvée",
+        "route": "Itinéraire",
+        "call": "Appeler",
+        "totalDeliveries": "Total livraisons",
+        "inProgress": "En cours",
+        "completedToday": "Terminées aujourd'hui",
+        "planned": "Planifiées",
+        "toast": {
+            "loadError": "Erreur lors du chargement des livraisons"
+        }
+    },
+    "calendar": {
+        "title": "Planning des livraisons",
+        "subtitle": "Visualisez et planifiez les livraisons",
+        "calendarView": "Calendrier",
+        "listView": "Liste",
+        "newDelivery": "Nouvelle livraison",
+        "legendPlanned": "Planifiée",
+        "legendInProgress": "En cours",
+        "legendCompleted": "Terminée",
+        "today": "Aujourd'hui",
+        "month": "Mois",
+        "week": "Semaine",
+        "day": "Jour",
+        "listTitle": "Liste des livraisons",
+        "noDeliveries": "Aucune livraison planifiée",
+        "detailTitle": "Détails de la livraison",
+        "client": "Client",
+        "plannedDate": "Date planifiée",
+        "driver": "Chauffeur",
+        "vehicle": "Véhicule",
+        "notes": "Notes",
+        "start": "Démarrer",
+        "complete": "Terminer",
+        "dialog": {
+            "editTitle": "Modifier la livraison",
+            "createTitle": "Nouvelle livraison"
+        },
+        "form": {
+            "order": "Commande *",
+            "selectOrder": "Sélectionner une commande",
+            "driver": "Chauffeur *",
+            "selectDriver": "Sélectionner un chauffeur",
+            "vehicle": "Véhicule *",
+            "selectVehicle": "Sélectionner un véhicule",
+            "plannedDate": "Date planifiée *",
+            "notes": "Notes",
+            "notesPlaceholder": "Notes optionnelles...",
+            "cancel": "Annuler"
+        },
+        "toast": {
+            "loadError": "Erreur lors du chargement des livraisons",
+            "requiredFields": "Veuillez remplir tous les champs obligatoires",
+            "updated": "Livraison modifiée avec succès",
+            "created": "Livraison créée avec succès",
+            "selectOrder": "Veuillez sélectionner une commande",
+            "saveError": "Erreur lors de la sauvegarde",
+            "statusUpdated": "Statut mis à jour",
+            "statusError": "Erreur lors du changement de statut",
+            "deleteConfirm": "Supprimer cette livraison ?",
+            "deleted": "Livraison supprimée",
+            "deleteError": "Erreur lors de la suppression"
+        }
+    },
+    "notifications": {
+        "title": "Notifications",
+        "markAllRead": "Tout marquer comme lu",
+        "empty": "Aucune notification",
+        "clearAll": "Effacer toutes les notifications",
+        "timeNow": "À l'instant",
+        "timeMinutes": "Il y a {{count}} min",
+        "timeHours": "Il y a {{count}}h",
+        "timeDays": "Il y a {{count}}j"
+    }
+}

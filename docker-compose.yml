@@ -1,0 +1,79 @@
+# ============================================
+# Docker Compose - Fox Petroleum (Full Stack)
+# ============================================
+
+services:
+  # Backend Laravel API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fox-petroleum-backend
+    ports:
+      - "8000:80"
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8000
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=fox_petroleum
+      - DB_USERNAME=root
+      - DB_PASSWORD=
+      - JWT_SECRET=FRGjjI9frDAzDmPyqfMZydOJ0yOFefWW4aY3s5BqH0b5mqX6eIyrcySJrNevYqJ1
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - QUEUE_CONNECTION=sync
+    volumes:
+      - ./storage:/var/www/html/storage
+    networks:
+      - fox-petroleum-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Frontend React/Vite
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000/api
+    container_name: fox-petroleum-frontend
+    ports:
+      - "8080:80"
+    networks:
+      - fox-petroleum-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: fox-petroleum-mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=fox_petroleum
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - fox-petroleum-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+networks:
+  fox-petroleum-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

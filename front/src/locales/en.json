@@ -1,0 +1,827 @@
+{
+    "common": {
+        "save": "Save",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "view": "View",
+        "viewAll": "View all",
+        "search": "Search...",
+        "export": "Export",
+        "active": "Active",
+        "inactive": "Inactive",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "status": "Status",
+        "actions": "Actions",
+        "print": "Print",
+        "close": "Close",
+        "loading": "Loading...",
+        "all": "All",
+        "yes": "Yes",
+        "no": "No",
+        "confirm": "Confirm",
+        "back": "Back"
+    },
+    "status": {
+        "draft": "Draft",
+        "confirmed": "Confirmed",
+        "preparation": "Preparation",
+        "delivery": "Delivery",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled",
+        "planned": "Planned",
+        "inProgress": "In Progress",
+        "completed": "Completed",
+        "sent": "Sent",
+        "paid": "Paid",
+        "overdue": "Overdue"
+    },
+    "nav": {
+        "dashboard": "Dashboard",
+        "orders": "Orders",
+        "catalog": "Catalog",
+        "myOrders": "My Orders",
+        "products": "Products",
+        "customers": "Customers",
+        "deliveries": "Deliveries",
+        "invoices": "Invoices",
+        "kanban": "Kanban",
+        "calendar": "Schedule",
+        "tracking": "GPS Tracking",
+        "reports": "Reports",
+        "vehicles": "Vehicles",
+        "careers": "Careers",
+        "users": "Users",
+        "settings": "Settings",
+        "profile": "My Profile"
+    },
+    "layout": {
+        "logout": "Logout",
+        "search": "Search..."
+    },
+    "login": {
+        "brand": "FoxPetroleum",
+        "tagline": "Lubricant Distribution",
+        "welcome": "Welcome to your workspace",
+        "description": "Log in to access your dashboard, manage your orders and track your deliveries in real time.",
+        "title": "Login",
+        "subtitle": "Enter your credentials to access your account",
+        "emailLabel": "Email address",
+        "emailPlaceholder": "name@company.com",
+        "passwordLabel": "Password",
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot password?",
+        "loggingIn": "Logging in...",
+        "submit": "Log in",
+        "noAccount": "Don't have an account?",
+        "register": "Sign up"
+    },
+    "register": {
+        "title": "Create an account",
+        "name": "Name",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "submitting": "Signing up...",
+        "submit": "Sign up",
+        "hasAccount": "Already have an account?",
+        "login": "Log in",
+        "toast": {
+            "success": "Registration successful, please log in.",
+            "error": "Registration error"
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "subtitle": "Configure application settings",
+        "tabs": {
+            "company": "Company",
+            "profile": "Profile",
+            "notifications": "Notifications",
+            "security": "Security"
+        },
+        "company": {
+            "title": "Company information",
+            "name": "Company name",
+            "ice": "ICE",
+            "email": "Email",
+            "phone": "Phone",
+            "address": "Address",
+            "financialTitle": "Financial settings",
+            "tva": "Default VAT (%)",
+            "currency": "Currency",
+            "currencyMAD": "MAD - Moroccan Dirham",
+            "currencyEUR": "EUR - Euro",
+            "currencyUSD": "USD - US Dollar",
+            "paymentDelay": "Payment delay (days)"
+        },
+        "profile": {
+            "title": "Personal information",
+            "fullName": "Full name",
+            "email": "Email",
+            "phone": "Phone",
+            "language": "Language"
+        },
+        "notifications": {
+            "title": "Notification preferences",
+            "newOrders": "New orders",
+            "newOrdersDesc": "Receive a notification when a new order is placed",
+            "deliveriesComplete": "Completed deliveries",
+            "deliveriesCompleteDesc": "Be notified when a delivery is completed",
+            "lowStock": "Low stock",
+            "lowStockDesc": "Alert when product stock is critically low",
+            "paymentsReceived": "Payments received",
+            "paymentsReceivedDesc": "Notification when a payment is received",
+            "overdueInvoices": "Overdue invoices",
+            "overdueInvoicesDesc": "Reminder for unpaid invoices"
+        },
+        "security": {
+            "changePassword": "Change password",
+            "currentPassword": "Current password",
+            "newPassword": "New password",
+            "confirmPassword": "Confirm new password",
+            "twoFactorTitle": "Two-factor authentication",
+            "enable2fa": "Enable 2FA",
+            "enable2faDesc": "Secure your account with additional authentication"
+        },
+        "toast": {
+            "companySaved": "Company settings saved",
+            "profileSaved": "Profile updated successfully",
+            "profileError": "Error updating profile",
+            "passwordMismatch": "Passwords do not match",
+            "passwordTooShort": "Password must be at least 8 characters",
+            "passwordChanged": "Password changed successfully",
+            "passwordError": "Error changing password",
+            "notificationsSaved": "Notification preferences saved"
+        }
+    },
+    "adminDashboard": {
+        "title": "Administrator Dashboard",
+        "subtitle": "Overview of company activity",
+        "newOrder": "New order",
+        "stats": {
+            "totalOrders": "Total Orders",
+            "revenue": "Revenue",
+            "customers": "Customers",
+            "products": "Products",
+            "vsLastMonth": "vs last month"
+        },
+        "lowStock": "{{count}} products with critically low stock",
+        "lowStockAction": "Restocking needed",
+        "overdueInvoices": "{{count}} overdue invoices",
+        "overdueInvoicesAction": "Customer follow-up needed",
+        "revenueChart": "Monthly Revenue",
+        "orderStatusChart": "Orders by Status",
+        "recentOrders": "Recent Orders",
+        "topProducts": "Top Selling Products",
+        "units": "units",
+        "toast": {
+            "loadError": "Error loading dashboard"
+        }
+    },
+    "commercialDashboard": {
+        "title": "Commercial Dashboard",
+        "subtitle": "Here is an overview of your commercial activity",
+        "newOrder": "New order",
+        "myOrders": "My orders",
+        "pending": "Pending",
+        "pendingAction": "To process",
+        "myCustomers": "My customers",
+        "newCustomers": "new",
+        "deliveriesToday": "Today's deliveries",
+        "inProgress": "2 in progress",
+        "thisMonth": "this month",
+        "lowStockAlert": "{{count}} product(s) with critically low stock",
+        "lowStockDesc": "Some products need urgent restocking",
+        "viewProducts": "View products",
+        "monthlyActivity": "My monthly activity",
+        "chartOrders": "Orders",
+        "chartRevenue": "Revenue (MAD)",
+        "recentOrders": "My recent orders",
+        "quickActions": "Quick actions",
+        "actionNewOrder": "New order",
+        "actionKanban": "Kanban tasks",
+        "actionDelivery": "Delivery schedule",
+        "actionNewCustomer": "New customer",
+        "toast": {
+            "loadError": "Error loading dashboard"
+        }
+    },
+    "chauffeurDashboard": {
+        "title": "Driver Area",
+        "subtitle": "Manage your deliveries for the day",
+        "online": "Online",
+        "offline": "Offline",
+        "today": "Today",
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed",
+        "currentDelivery": "Current delivery",
+        "statusInDelivery": "In delivery",
+        "route": "Route",
+        "finish": "Finish",
+        "pendingDeliveries": "Pending deliveries",
+        "planned": "Planned",
+        "start": "Start",
+        "completedDeliveries": "Completed deliveries",
+        "statusDelivered": "Delivered",
+        "offlineMode": "Offline mode activated",
+        "offlineDesc": "Your actions will be synced when the connection is restored",
+        "deliveryMap": "Delivery map",
+        "goOffline": "Go offline",
+        "goOnline": "Go online",
+        "toast": {
+            "started": "Delivery started",
+            "startError": "Error starting delivery",
+            "completed": "Delivery completed",
+            "completeError": "Error completing delivery",
+            "loadError": "Error loading deliveries"
+        }
+    },
+    "clientDashboard": {
+        "welcome": "Welcome, {{name}}",
+        "subtitle": "Here is a summary of your orders",
+        "totalOrders": "Total orders",
+        "inProgress": "In progress",
+        "delivered": "Delivered",
+        "totalSpent": "Total spent",
+        "recentOrders": "My recent orders",
+        "noOrders": "No orders yet",
+        "toast": {
+            "loadError": "Error loading dashboard"
+        }
+    },
+    "orders": {
+        "title": "Orders",
+        "subtitle": "Manage customer orders",
+        "newOrder": "New order",
+        "searchPlaceholder": "Search by # or customer...",
+        "filterStatus": "Filter by status",
+        "allStatuses": "All statuses",
+        "table": {
+            "orderNumber": "Order #",
+            "customer": "Customer",
+            "date": "Date",
+            "total": "Total",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "action": {
+            "viewDetails": "View details",
+            "edit": "Edit",
+            "startPreparation": "Start preparation",
+            "startDelivery": "Start delivery",
+            "markDelivered": "Mark as delivered",
+            "delete": "Delete"
+        },
+        "confirm": {
+            "delete": "Are you sure you want to delete this order?"
+        },
+        "toast": {
+            "deleted": "Order deleted successfully",
+            "deleteError": "Error deleting order",
+            "statusUpdated": "Status updated",
+            "statusError": "Error updating status",
+            "loadError": "Error loading orders",
+            "created": "Order created successfully",
+            "createError": "Error creating order"
+        },
+        "noOrdersFound": "No orders found",
+        "notFound": "Order not found",
+        "backToOrders": "Back to orders",
+        "action": {
+            "viewDetails": "View details",
+            "edit": "Edit",
+            "startPreparation": "Start preparation",
+            "startDelivery": "Start delivery",
+            "markDelivered": "Mark as delivered",
+            "delete": "Delete",
+            "confirm": "Confirm"
+        },
+        "form": {
+            "customer": "Customer",
+            "selectCustomer": "Select a customer",
+            "products": "Products",
+            "add": "Add",
+            "product": "Product",
+            "notes": "Notes",
+            "notesPlaceholder": "Additional notes...",
+            "estimatedTotal": "Estimated total",
+            "cancel": "Cancel",
+            "createOrder": "Create order",
+            "dataError": "Error loading data",
+            "editOrder": "Edit order",
+            "editOrderSubtitle": "Edit order details",
+            "newOrderSubtitle": "Fill in the information to create an order",
+            "generalInfo": "General information",
+            "deliveryDate": "Desired delivery date",
+            "quantity": "Quantity",
+            "unitPrice": "Unit price",
+            "totalHT": "Total excl. tax",
+            "selectProduct": "Select a product",
+            "subtotalHT": "Subtotal excl. tax",
+            "tva": "VAT",
+            "totalTTC": "Total incl. tax",
+            "addProductError": "Please add at least one product"
+        },
+        "detail": {
+            "createdOn": "Created on",
+            "orderedItems": "Ordered items",
+            "delivery": "Delivery",
+            "scheduledFor": "Scheduled for",
+            "noDeliveryPlanned": "No delivery planned",
+            "commercial": "Sales representative",
+            "unassigned": "Unassigned"
+        }
+    },
+    "products": {
+        "title": "Products",
+        "subtitle": "Manage your product catalog and inventory",
+        "newProduct": "New product",
+        "lowStockAlert": "{{count}} product(s) with critically low stock",
+        "lowStockDesc": "Some products need restocking",
+        "searchPlaceholder": "Search for a product...",
+        "category": "Category",
+        "allCategories": "All categories",
+        "lowStockFilter": "Low stock",
+        "stock": {
+            "outOfStock": "Out of stock",
+            "critical": "Critical",
+            "low": "Low",
+            "ok": "OK",
+            "label": "Stock",
+            "min": "Min:"
+        },
+        "action": {
+            "edit": "Edit",
+            "delete": "Delete"
+        },
+        "dialog": {
+            "editTitle": "Edit product",
+            "createTitle": "New product"
+        },
+        "form": {
+            "code": "Code *",
+            "category": "Category",
+            "name": "Name *",
+            "description": "Description",
+            "descPlaceholder": "Product description...",
+            "price": "Price *",
+            "tva": "VAT (%)",
+            "unit": "Unit *",
+            "stock": "Stock",
+            "minStock": "Minimum stock",
+            "active": "Active",
+            "cancel": "Cancel"
+        },
+        "toast": {
+            "loadError": "Error loading products",
+            "deleteConfirm": "Are you sure you want to delete this product?",
+            "deleted": "Product deleted successfully",
+            "deleteError": "Error deleting product",
+            "requiredFields": "Please fill in all required fields",
+            "updated": "Product updated successfully",
+            "created": "Product created successfully",
+            "saveError": "Error saving"
+        },
+        "noProductsFound": "No products found"
+    },
+    "customers": {
+        "title": "Customers",
+        "subtitle": "Manage your customer base",
+        "newCustomer": "New customer",
+        "searchPlaceholder": "Search for a customer...",
+        "table": {
+            "customer": "Customer",
+            "contact": "Contact",
+            "address": "Address",
+            "identifiers": "Identifiers",
+            "actions": "Actions"
+        },
+        "action": {
+            "newOrder": "New order",
+            "edit": "Edit",
+            "delete": "Delete"
+        },
+        "dialog": {
+            "editTitle": "Edit customer",
+            "createTitle": "New customer"
+        },
+        "form": {
+            "code": "Code *",
+            "name": "Name *",
+            "namePlaceholder": "Customer name",
+            "email": "Email",
+            "phone": "Phone",
+            "address": "Address",
+            "addressPlaceholder": "Full address",
+            "city": "City",
+            "postalCode": "Postal code",
+            "ice": "ICE",
+            "rc": "RC",
+            "cancel": "Cancel",
+            "update": "Update",
+            "create": "Create"
+        },
+        "toast": {
+            "loadError": "Error loading customers",
+            "deleteConfirm": "Are you sure you want to delete this customer?",
+            "deleted": "Customer deleted successfully",
+            "deleteError": "Error deleting customer",
+            "requiredFields": "Name and code are required",
+            "updated": "Customer updated successfully",
+            "created": "Customer created successfully",
+            "saveError": "Error saving"
+        },
+        "noCustomersFound": "No customers found"
+    },
+    "deliveries": {
+        "title": "Deliveries",
+        "subtitle": "Manage and track deliveries",
+        "newDelivery": "New delivery",
+        "searchPlaceholder": "Search for a delivery...",
+        "allStatuses": "All statuses",
+        "table": {
+            "order": "Order",
+            "customer": "Customer",
+            "date": "Date",
+            "driver": "Driver",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "action": {
+            "viewOrder": "View order",
+            "trackOnMap": "Track on map",
+            "start": "Start",
+            "complete": "Complete"
+        },
+        "toast": {
+            "loadError": "Error loading deliveries",
+            "statusUpdated": "Status updated"
+        },
+        "noDeliveriesFound": "No deliveries found"
+    },
+    "invoices": {
+        "title": "Invoices",
+        "subtitle": "Manage invoices and customer payments",
+        "newInvoice": "New invoice",
+        "totalInvoices": "Total invoices",
+        "paidInvoices": "Paid invoices",
+        "outstanding": "Outstanding",
+        "searchPlaceholder": "Search for an invoice...",
+        "allStatuses": "All statuses",
+        "table": {
+            "invoiceNumber": "Invoice #",
+            "customer": "Customer",
+            "date": "Date",
+            "amount": "Amount",
+            "remaining": "Remaining",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "action": {
+            "view": "View",
+            "downloadPdf": "Download PDF",
+            "send": "Send",
+            "markPaid": "Mark as paid"
+        },
+        "toast": {
+            "loadError": "Error loading invoices",
+            "statusUpdated": "Status updated"
+        },
+        "noInvoicesFound": "No invoices found"
+    },
+    "kanban": {
+        "title": "Kanban Board",
+        "subtitle": "Manage tasks and team validations",
+        "newTask": "New task",
+        "column": {
+            "todo": "To Do",
+            "pendingValidation": "Pending Validation",
+            "validated": "Validated",
+            "inProgress": "In Progress",
+            "done": "Done"
+        },
+        "priority": {
+            "all": "All priorities",
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "urgent": "Urgent"
+        },
+        "action": {
+            "markDone": "Mark as done",
+            "delete": "Delete"
+        },
+        "unassigned": "Unassigned",
+        "form": {
+            "title": "Title *",
+            "titlePlaceholder": "Task title",
+            "description": "Description",
+            "descPlaceholder": "Detailed description...",
+            "priority": "Priority",
+            "dueDate": "Due date",
+            "assignedTo": "Assigned to",
+            "selectUser": "Select a user",
+            "linkedOrder": "Linked to an order",
+            "selectOrder": "Select an order (optional)",
+            "cancel": "Cancel",
+            "create": "Create task"
+        },
+        "toast": {
+            "loadError": "Error loading tasks",
+            "moved": "Task moved",
+            "moveError": "Error moving task",
+            "deleteConfirm": "Are you sure you want to delete this task?",
+            "deleted": "Task deleted",
+            "deleteError": "Error deleting task",
+            "created": "Task created successfully",
+            "createError": "Error creating task",
+            "markedDone": "Task marked as done"
+        }
+    },
+    "vehicles": {
+        "title": "Vehicles",
+        "subtitle": "Manage the vehicle fleet",
+        "newVehicle": "New vehicle",
+        "total": "Total",
+        "active": "Active",
+        "inactive": "Inactive",
+        "searchPlaceholder": "Search by plate, brand, model...",
+        "statusAll": "All",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "tableTitle": "Vehicle list ({{count}})",
+        "table": {
+            "plate": "License plate",
+            "brand": "Brand",
+            "model": "Model",
+            "capacity": "Capacity (L)",
+            "deliveries": "Deliveries",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "dialog": {
+            "editTitle": "Edit vehicle",
+            "createTitle": "New vehicle"
+        },
+        "form": {
+            "plate": "License plate *",
+            "brand": "Brand *",
+            "model": "Model *",
+            "capacity": "Capacity (liters)",
+            "active": "Active",
+            "cancel": "Cancel"
+        },
+        "toast": {
+            "loadError": "Error loading vehicles",
+            "requiredFields": "Please fill in all required fields",
+            "updated": "Vehicle updated successfully",
+            "created": "Vehicle created successfully",
+            "saveError": "Error saving",
+            "deleted": "Vehicle deleted",
+            "deleteError": "Error deleting vehicle",
+            "deactivated": "Vehicle deactivated",
+            "activated": "Vehicle activated",
+            "updateError": "Error updating"
+        },
+        "noVehiclesFound": "No vehicles found"
+    },
+    "careers": {
+        "title": "Careers",
+        "subtitle": "Manage job offers published on the website",
+        "newOffer": "New offer",
+        "totalOffers": "Total offers",
+        "activeOffers": "Active",
+        "inactiveOffers": "Inactive",
+        "searchPlaceholder": "Search by title, location, department...",
+        "allStatuses": "All statuses",
+        "filterActive": "Active",
+        "filterInactive": "Inactive",
+        "allTypes": "All types",
+        "tableTitle": "Offer list ({{count}})",
+        "table": {
+            "title": "Title",
+            "location": "Location",
+            "type": "Type",
+            "department": "Department",
+            "status": "Status",
+            "date": "Date",
+            "actions": "Actions"
+        },
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "action": {
+            "view": "View",
+            "edit": "Edit",
+            "deactivate": "Deactivate",
+            "activate": "Activate",
+            "delete": "Delete"
+        },
+        "dialog": {
+            "editTitle": "Edit offer",
+            "createTitle": "New job offer"
+        },
+        "form": {
+            "jobTitle": "Job title *",
+            "location": "Location *",
+            "contractType": "Contract type *",
+            "department": "Department",
+            "deptPlaceholder": "E.g.: Logistics, Sales, HR...",
+            "description": "Description *",
+            "descPlaceholder": "Describe the position, missions, etc.",
+            "requirements": "Requirements",
+            "reqPlaceholder": "Required experience, skills, degrees...",
+            "contactEmail": "Contact email",
+            "activeLabel": "Active (visible on website)",
+            "cancel": "Cancel"
+        },
+        "viewDialog": {
+            "description": "Description",
+            "requirements": "Requirements",
+            "contact": "Contact:",
+            "createdAt": "Created on",
+            "updatedAt": "Updated on"
+        },
+        "toast": {
+            "loadError": "Error loading offers",
+            "requiredFields": "Please fill in all required fields",
+            "updated": "Offer updated successfully",
+            "created": "Offer created successfully",
+            "saveError": "Error saving",
+            "deleted": "Offer deleted",
+            "deleteError": "Error deleting offer",
+            "deactivated": "Offer deactivated",
+            "activated": "Offer activated",
+            "updateError": "Error updating"
+        },
+        "noOffersFound": "No offers found"
+    },
+    "users": {
+        "title": "Users",
+        "subtitle": "Manage users and their permissions",
+        "newUser": "New user",
+        "searchPlaceholder": "Search for a user...",
+        "allRoles": "All roles",
+        "roleAdmin": "Administrator",
+        "roleCommercial": "Commercial",
+        "roleChauffeur": "Driver",
+        "roleManager": "Manager",
+        "roleUser": "User",
+        "table": {
+            "user": "User",
+            "role": "Role",
+            "contact": "Contact",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "noPhone": "Not provided",
+        "dialog": {
+            "createTitle": "New user",
+            "editTitle": "Edit user"
+        },
+        "form": {
+            "fullName": "Full name *",
+            "fullNamePlaceholder": "First and last name",
+            "email": "Email *",
+            "password": "Password *",
+            "editPassword": "New password (leave blank to keep current)",
+            "phone": "Phone",
+            "role": "Role *",
+            "cancel": "Cancel",
+            "create": "Create user"
+        },
+        "toast": {
+            "loadError": "Error loading users",
+            "deleteConfirm": "Are you sure you want to delete this user?",
+            "deleted": "User deleted",
+            "deleteError": "Error deleting user",
+            "statusUpdated": "Status updated",
+            "statusError": "Error updating status",
+            "created": "User created successfully",
+            "updated": "User updated successfully",
+            "passwordRequired": "Password is required",
+            "saveError": "Error saving"
+        },
+        "noUsersFound": "No users found"
+    },
+    "reports": {
+        "title": "Reports",
+        "subtitle": "Analyze company performance",
+        "period": {
+            "week": "This week",
+            "month": "This month",
+            "quarter": "This quarter",
+            "year": "This year"
+        },
+        "type": {
+            "sales": "Sales",
+            "products": "Products",
+            "customers": "Customers",
+            "deliveries": "Deliveries"
+        },
+        "revenue": "Revenue",
+        "orders": "Orders",
+        "averageBasket": "Average basket",
+        "activeCustomers": "Active customers",
+        "salesChart": "Sales evolution",
+        "categoryChart": "Sales by category",
+        "topCustomers": "Top customers",
+        "table": {
+            "customer": "Customer",
+            "orders": "Orders",
+            "amount": "Amount",
+            "revenuePercent": "% of revenue"
+        },
+        "toast": {
+            "exported": "Report exported",
+            "loadError": "Error loading reports"
+        }
+    },
+    "tracking": {
+        "title": "Delivery Tracking",
+        "subtitle": "View delivery positions in real time",
+        "refresh": "Refresh",
+        "deliveriesTitle": "Deliveries",
+        "filterAll": "All",
+        "filterPlanned": "Planned",
+        "filterInProgress": "In Progress",
+        "filterCompleted": "Completed",
+        "noDeliveries": "No deliveries found",
+        "route": "Route",
+        "call": "Call",
+        "totalDeliveries": "Total deliveries",
+        "inProgress": "In progress",
+        "completedToday": "Completed today",
+        "planned": "Planned",
+        "toast": {
+            "loadError": "Error loading deliveries"
+        }
+    },
+    "calendar": {
+        "title": "Delivery Schedule",
+        "subtitle": "View and schedule deliveries",
+        "calendarView": "Calendar",
+        "listView": "List",
+        "newDelivery": "New delivery",
+        "legendPlanned": "Planned",
+        "legendInProgress": "In Progress",
+        "legendCompleted": "Completed",
+        "today": "Today",
+        "month": "Month",
+        "week": "Week",
+        "day": "Day",
+        "listTitle": "Delivery list",
+        "noDeliveries": "No scheduled deliveries",
+        "detailTitle": "Delivery details",
+        "client": "Customer",
+        "plannedDate": "Planned date",
+        "driver": "Driver",
+        "vehicle": "Vehicle",
+        "notes": "Notes",
+        "start": "Start",
+        "complete": "Complete",
+        "dialog": {
+            "editTitle": "Edit delivery",
+            "createTitle": "New delivery"
+        },
+        "form": {
+            "order": "Order *",
+            "selectOrder": "Select an order",
+            "driver": "Driver *",
+            "selectDriver": "Select a driver",
+            "vehicle": "Vehicle *",
+            "selectVehicle": "Select a vehicle",
+            "plannedDate": "Planned date *",
+            "notes": "Notes",
+            "notesPlaceholder": "Optional notes...",
+            "cancel": "Cancel"
+        },
+        "toast": {
+            "loadError": "Error loading deliveries",
+            "requiredFields": "Please fill in all required fields",
+            "updated": "Delivery updated successfully",
+            "created": "Delivery created successfully",
+            "selectOrder": "Please select an order",
+            "saveError": "Error saving",
+            "statusUpdated": "Status updated",
+            "statusError": "Error changing status",
+            "deleteConfirm": "Delete this delivery?",
+            "deleted": "Delivery deleted",
+            "deleteError": "Error deleting"
+        }
+    },
+    "notifications": {
+        "title": "Notifications",
+        "markAllRead": "Mark all as read",
+        "empty": "No notifications",
+        "clearAll": "Clear all notifications",
+        "timeNow": "Just now",
+        "timeMinutes": "{{count}} min ago",
+        "timeHours": "{{count}}h ago",
+        "timeDays": "{{count}}d ago"
+    }
+}
