@@ -303,7 +303,7 @@ class DeliveryController extends Controller
                 ['admin', 'manager', 'commercial'],
                 'delivery',
                 'Livraison terminée',
-                "Livraison pour {$orderNum} ({$customerName}) a été effectuée par " . ($delivery->chauffeur->name ?? '') . '. Montant encaissé: ' . number_format($delivery->collected_amount, 2) . ' MAD.',
+                "Livraison pour {$orderNum} ({$customerName}) a été effectuée par " . ($delivery->chauffeur->name ?? '') . '. Montant encaissé: ' . number_format((float) ($delivery->collected_amount ?? 0), 2) . ' MAD.',
                 '/dashboard/deliveries'
             );
         } elseif ($request->status === 'in_progress') {
@@ -392,7 +392,7 @@ class DeliveryController extends Controller
                 ['admin', 'manager'],
                 'alert',
                 'Écart de paiement détecté',
-                "Livraison #{$delivery->id}: Attendu " . number_format($delivery->cash_amount, 2) . ' MAD, Encaissé ' . number_format($delivery->collected_amount, 2) . ' MAD. Écart: ' . number_format(abs((float) $delivery->cash_amount - (float) $delivery->collected_amount), 2) . ' MAD.',
+                "Livraison #{$delivery->id}: Attendu " . number_format((float) ($delivery->cash_amount ?? 0), 2) . ' MAD, Encaissé ' . number_format((float) ($delivery->collected_amount ?? 0), 2) . ' MAD. Écart: ' . number_format(abs((float) $delivery->cash_amount - (float) $delivery->collected_amount), 2) . ' MAD.',
                 '/dashboard/deliveries'
             );
         }
@@ -520,6 +520,7 @@ class DeliveryController extends Controller
             return response()->json(['success' => false, 'error' => $validator->errors()->first(), 'errors' => $validator->errors()], 422);
         }
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, Delivery> $deliveries */
         $deliveries = Delivery::whereIn('id', $request->delivery_ids)
             ->where('chauffeur_id', $user->id)
             ->where('status', 'completed')
@@ -535,6 +536,7 @@ class DeliveryController extends Controller
         $totalCollected = 0;
         $summaryItems = [];
 
+        /** @var Delivery $delivery */
         foreach ($deliveries as $delivery) {
             $delivery->cash_submitted = true;
             $delivery->cash_submitted_at = now();

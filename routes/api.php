@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\VehicleController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\CareerController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\DiscountController;
+use App\Http\Controllers\Api\IncidentController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('cors')->group(function () {
@@ -125,6 +127,20 @@ Route::middleware('cors')->group(function () {
             Route::apiResource('invoices', InvoiceController::class);
             Route::patch('/invoices/{invoice}/status', [InvoiceController::class, 'updateStatus']);
             Route::post('/invoices/{invoice}/payments', [InvoiceController::class, 'addPayment']);
+        });
+
+        // ── Discounts (admin, manager) ───────────────────────
+        Route::middleware('checkrole:admin,manager')->group(function () {
+            Route::apiResource('admin/discounts', DiscountController::class);
+        });
+
+        // ── Incidents ─────────────────────────────────────────
+        Route::middleware('checkrole:admin,manager,chauffeur')->group(function () {
+            Route::get('/incidents', [IncidentController::class, 'index']);
+            Route::get('/incidents/{delivery}', [IncidentController::class, 'show']);
+            Route::post('/deliveries/{delivery}/incident', [IncidentController::class, 'store']);
+            Route::put('/incidents/{delivery}', [IncidentController::class, 'update']);
+            Route::delete('/incidents/{delivery}', [IncidentController::class, 'destroy']);
         });
 
         // ── Tasks (all authenticated) ─────────────────────────

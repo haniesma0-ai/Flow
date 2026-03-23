@@ -49,6 +49,9 @@ export interface Customer {
   phone: string;
   address: string;
   city: string;
+  deliveryAddress?: string;
+  deliveryCity?: string;
+  billingSameAsDelivery?: boolean;
   postalCode: string;
   country: string;
   ice?: string;

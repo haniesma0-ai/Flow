@@ -22,6 +22,8 @@ import ProductsPage from '@/pages/products/ProductsPage';
 import CustomersPage from '@/pages/customers/CustomersPage';
 import DeliveriesPage from '@/pages/deliveries/DeliveriesPage';
 import InvoicesPage from '@/pages/invoices/InvoicesPage';
+import DiscountsPage from '@/pages/discounts/DiscountsPage';
+import IncidentsPage from '@/pages/incidents/IncidentsPage';
 
 // Feature Pages
 import KanbanPage from '@/pages/kanban/KanbanPage';
@@ -197,6 +199,16 @@ function App() {
           <Route path="invoices" element={
             <ProtectedRoute allowedRoles={['admin', 'manager', 'commercial']}>
               <InvoicesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="discounts" element={
+            <ProtectedRoute allowedRoles={['admin', 'manager']}>
+              <DiscountsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="incidents" element={
+            <ProtectedRoute allowedRoles={['admin', 'manager', 'chauffeur']}>
+              <IncidentsPage />
             </ProtectedRoute>
           } />
           {/* Feature Routes */}

@@ -48,6 +48,8 @@
         "customers": "Customers",
         "deliveries": "Deliveries",
         "invoices": "Invoices",
+        "discounts": "Discounts",
+        "incidents": "Incidents",
         "kanban": "Kanban",
         "calendar": "Schedule",
         "tracking": "GPS Tracking",

@@ -54,6 +54,16 @@ const SettingsPage = () => {
   });
   const [passwordSaving, setPasswordSaving] = useState(false);
 
+  const [securityPrefs, setSecurityPrefs] = useState(() => {
+    const stored = localStorage.getItem('securityPrefs');
+    if (stored) {
+      try { return JSON.parse(stored); } catch { /* ignore */ }
+    }
+    return {
+      twoFactorEnabled: false,
+    };
+  });
+
   // Notifications
   const [notifications, setNotifications] = useState(() => {
     const stored = localStorage.getItem('notificationPrefs');
@@ -98,14 +108,14 @@ const SettingsPage = () => {
     }
   };
 
-  const handlePasswordSave = async () => {
+  const handlePasswordSave = async (): Promise<boolean> => {
     if (passwords.newPassword !== passwords.confirm) {
       toast.error(t('settings.toast.passwordMismatch'));
-      return;
+      return false;
     }
     if (passwords.newPassword.length < 8) {
       toast.error(t('settings.toast.passwordTooShort'));
-      return;
+      return false;
     }
     setPasswordSaving(true);
     try {
@@ -116,9 +126,11 @@ const SettingsPage = () => {
       });
       setPasswords({ current: '', newPassword: '', confirm: '' });
       toast.success(t('settings.toast.passwordChanged'));
+      return true;
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error || t('settings.toast.passwordError');
       toast.error(msg);
+      return false;
     } finally {
       setPasswordSaving(false);
     }
@@ -127,6 +139,18 @@ const SettingsPage = () => {
   const handleNotificationsSave = () => {
     localStorage.setItem('notificationPrefs', JSON.stringify(notifications));
     toast.success(t('settings.toast.notificationsSaved'));
+  };
+
+  const handleSecuritySave = async () => {
+    if (passwords.current || passwords.newPassword || passwords.confirm) {
+      const passwordUpdated = await handlePasswordSave();
+      if (!passwordUpdated) {
+        return;
+      }
+    }
+
+    localStorage.setItem('securityPrefs', JSON.stringify(securityPrefs));
+    toast.success(t('common.save'));
   };
 
   return (
@@ -369,7 +393,12 @@ const SettingsPage = () => {
                   </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" />
+                  <input
+                    type="checkbox"
+                    checked={securityPrefs.twoFactorEnabled}
+                    onChange={(e) => setSecurityPrefs({ ...securityPrefs, twoFactorEnabled: e.target.checked })}
+                    className="sr-only peer"
+                  />
                   <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
@@ -377,7 +406,7 @@ const SettingsPage = () => {
           </Card>
 
           <div className="flex justify-end">
-            <Button onClick={handlePasswordSave} disabled={passwordSaving}>
+            <Button onClick={handleSecuritySave} disabled={passwordSaving}>
               <Save className="w-4 h-4 mr-2" />
               {passwordSaving ? t('common.saving') : t('common.save')}
             </Button>

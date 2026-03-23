@@ -48,6 +48,8 @@
         "customers": "العملاء",
         "deliveries": "التوصيلات",
         "invoices": "الفواتير",
+        "discounts": "الخصومات",
+        "incidents": "الحوادث",
         "kanban": "كانبان",
         "calendar": "التخطيط",
         "tracking": "تتبع GPS",

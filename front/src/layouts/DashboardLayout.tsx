@@ -5,7 +5,7 @@ import {
   LayoutDashboard, ShoppingCart, Package, Users, Truck,
   FileText, KanbanSquare, Calendar, MapPin, BarChart3,
   Settings, UserCog, LogOut, Menu, X, ChevronDown,
-  Search, Car, Briefcase
+  Search, Car, Briefcase, Percent, AlertTriangle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -83,6 +83,18 @@ const DashboardLayout = () => {
       href: '/dashboard/invoices',
       icon: FileText,
       roles: ['admin', 'manager', 'commercial'],
+    },
+    {
+      name: t('nav.discounts'),
+      href: '/dashboard/discounts',
+      icon: Percent,
+      roles: ['admin', 'manager'],
+    },
+    {
+      name: t('nav.incidents'),
+      href: '/dashboard/incidents',
+      icon: AlertTriangle,
+      roles: ['admin', 'manager', 'chauffeur'],
     },
     {
       name: t('nav.kanban'),

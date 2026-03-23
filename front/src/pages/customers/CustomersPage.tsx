@@ -32,6 +32,9 @@ const emptyCustomer = {
   phone: '',
   address: '',
   city: '',
+  deliveryAddress: '',
+  deliveryCity: '',
+  billingSameAsDelivery: true,
   postalCode: '',
   country: 'Maroc',
   ice: '',
@@ -107,6 +110,9 @@ const CustomersPage = () => {
       phone: customer.phone,
       address: customer.address,
       city: customer.city,
+      deliveryAddress: customer.deliveryAddress || '',
+      deliveryCity: customer.deliveryCity || '',
+      billingSameAsDelivery: customer.billingSameAsDelivery ?? true,
       postalCode: customer.postalCode || '',
       country: customer.country || 'Maroc',
       ice: customer.ice || '',
@@ -120,14 +126,33 @@ const CustomersPage = () => {
       toast.error(t('customers.toast.requiredFields'));
       return;
     }
+    if (!form.billingSameAsDelivery && !form.deliveryAddress.trim()) {
+      toast.error('Veuillez renseigner l\'adresse de livraison ou cocher l\'adresse identique.');
+      return;
+    }
+
+    const payload = {
+      code: form.code,
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      address: form.address,
+      city: form.city,
+      delivery_address: form.billingSameAsDelivery ? form.address : form.deliveryAddress,
+      delivery_city: form.billingSameAsDelivery ? form.city : form.deliveryCity,
+      billing_same_as_delivery: form.billingSameAsDelivery,
+      ice: form.ice,
+      rc: form.rc,
+    };
+
     setIsSaving(true);
     try {
       if (editingCustomer) {
-        const updated = await customersService.updateCustomer(editingCustomer.id, form as Record<string, string>);
+        const updated = await customersService.updateCustomer(editingCustomer.id, payload);
         setCustomers((prev) => prev.map((c) => (c.id === editingCustomer.id ? { ...c, ...updated } : c)));
         toast.success(t('customers.toast.updated'));
       } else {
-        const created = await customersService.createCustomer(form as Record<string, string>);
+        const created = await customersService.createCustomer(payload);
         setCustomers((prev) => [...prev, created]);
         toast.success(t('customers.toast.created'));
       }
@@ -328,6 +353,41 @@ const CustomersPage = () => {
               <Label>{t('customers.form.address')}</Label>
               <Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder={t('customers.form.addressPlaceholder')} />
             </div>
+            <div className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2">
+              <div>
+                <p className="text-sm font-medium text-slate-900">Adresse de livraison identique</p>
+                <p className="text-xs text-slate-500">Utiliser l'adresse de facturation comme adresse de livraison</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.billingSameAsDelivery}
+                  onChange={(e) => setForm({ ...form, billingSameAsDelivery: e.target.checked })}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </div>
+            {!form.billingSameAsDelivery && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Adresse de livraison</Label>
+                  <Input
+                    value={form.deliveryAddress}
+                    onChange={(e) => setForm({ ...form, deliveryAddress: e.target.value })}
+                    placeholder="Adresse de livraison"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Ville de livraison</Label>
+                  <Input
+                    value={form.deliveryCity}
+                    onChange={(e) => setForm({ ...form, deliveryCity: e.target.value })}
+                    placeholder="Ville de livraison"
+                  />
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>{t('customers.form.city')}</Label>

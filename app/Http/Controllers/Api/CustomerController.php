@@ -33,7 +33,7 @@ class CustomerController extends Controller
         }
 
         $customers = $query
-            ->select('id', 'code', 'name', 'email', 'phone', 'address', 'city', 'ice', 'rc', 'is_active', 'created_at', 'updated_at')
+            ->select('id', 'code', 'name', 'email', 'phone', 'address', 'city', 'delivery_address', 'delivery_city', 'billing_same_as_delivery', 'ice', 'rc', 'is_active', 'created_at', 'updated_at')
             ->orderBy('name')
             ->paginate($perPage);
 
@@ -46,6 +46,9 @@ class CustomerController extends Controller
                 'phone' => $customer->phone,
                 'address' => $customer->address,
                 'city' => $customer->city,
+                'deliveryAddress' => $customer->delivery_address,
+                'deliveryCity' => $customer->delivery_city,
+                'billingSameAsDelivery' => (bool) $customer->billing_same_as_delivery,
                 'ice' => $customer->ice,
                 'rc' => $customer->rc,
                 'isActive' => (bool) $customer->is_active,
@@ -76,6 +79,9 @@ class CustomerController extends Controller
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'city' => 'nullable|string|max:100',
+            'delivery_address' => 'nullable|string',
+            'delivery_city' => 'nullable|string|max:100',
+            'billing_same_as_delivery' => 'boolean',
             'ice' => 'nullable|string|max:50',
             'rc' => 'nullable|string|max:50',
             'credit_limit' => 'numeric|min:0',
@@ -98,6 +104,9 @@ class CustomerController extends Controller
                 'phone' => $customer->phone,
                 'address' => $customer->address,
                 'city' => $customer->city,
+                'deliveryAddress' => $customer->delivery_address,
+                'deliveryCity' => $customer->delivery_city,
+                'billingSameAsDelivery' => (bool) $customer->billing_same_as_delivery,
                 'ice' => $customer->ice,
                 'rc' => $customer->rc,
                 'isActive' => (bool) $customer->is_active,
@@ -121,6 +130,9 @@ class CustomerController extends Controller
                 'phone' => $customer->phone,
                 'address' => $customer->address,
                 'city' => $customer->city,
+                'deliveryAddress' => $customer->delivery_address,
+                'deliveryCity' => $customer->delivery_city,
+                'billingSameAsDelivery' => (bool) $customer->billing_same_as_delivery,
                 'ice' => $customer->ice,
                 'rc' => $customer->rc,
                 'isActive' => (bool) $customer->is_active,
@@ -141,6 +153,9 @@ class CustomerController extends Controller
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'city' => 'nullable|string|max:100',
+            'delivery_address' => 'nullable|string',
+            'delivery_city' => 'nullable|string|max:100',
+            'billing_same_as_delivery' => 'boolean',
             'ice' => 'nullable|string|max:50',
             'rc' => 'nullable|string|max:50',
             'credit_limit' => 'sometimes|numeric|min:0',
@@ -163,6 +178,9 @@ class CustomerController extends Controller
                 'phone' => $customer->phone,
                 'address' => $customer->address,
                 'city' => $customer->city,
+                'deliveryAddress' => $customer->delivery_address,
+                'deliveryCity' => $customer->delivery_city,
+                'billingSameAsDelivery' => (bool) $customer->billing_same_as_delivery,
                 'ice' => $customer->ice,
                 'rc' => $customer->rc,
                 'isActive' => (bool) $customer->is_active,

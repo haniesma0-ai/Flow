@@ -18,6 +18,9 @@ class Customer extends Model
         'phone',
         'address',
         'city',
+        'delivery_address',
+        'delivery_city',
+        'billing_same_as_delivery',
         'ice',
         'rc',
         'credit_limit',
@@ -26,6 +29,7 @@ class Customer extends Model
 
     protected $casts = [
         'credit_limit' => 'decimal:2',
+        'billing_same_as_delivery' => 'boolean',
         'is_active' => 'boolean',
     ];
 

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
   ShoppingCart, Users, Package, TrendingUp, ArrowUpRight,
-  ArrowDownRight, AlertTriangle, Clock, ChevronRight
+  ArrowDownRight, AlertTriangle, Clock, ChevronRight, Percent
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -201,6 +201,36 @@ const AdminDashboard = () => {
           )}
         </div>
       ) : null}
+
+      {/* Operations */}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <Link to="/dashboard/discounts">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-sky-200 bg-sky-50/60">
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Gestion des reductions</p>
+                <p className="text-lg font-semibold text-slate-900 mt-1">Codes promo et remises</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center">
+                <Percent className="w-5 h-5" />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/dashboard/incidents">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-amber-200 bg-amber-50/60">
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Gestion des incidents</p>
+                <p className="text-lg font-semibold text-slate-900 mt-1">Suivi et resolution des livraisons</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
 
       {/* Charts */}
       <div className="grid lg:grid-cols-2 gap-6">
