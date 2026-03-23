@@ -41,7 +41,7 @@ export const deliveriesService = {
     /** Driver confirms COD payment collection */
     async confirmPayment(
         id: number,
-        data: { collected_amount: number; latitude: number; longitude: number }
+        data: { collected_amount: number; latitude?: number; longitude?: number }
     ): Promise<Delivery> {
         const response = await api.post(`/deliveries/${id}/confirm-payment`, data);
         return response.data;

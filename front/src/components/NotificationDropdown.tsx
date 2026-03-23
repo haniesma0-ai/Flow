@@ -65,7 +65,11 @@ const NotificationDropdown = () => {
     // Poll unread count every 30 seconds
     useEffect(() => {
         fetchUnreadCount();
-        const interval = setInterval(fetchUnreadCount, 30000);
+        const interval = setInterval(() => {
+            if (!document.hidden) {
+                fetchUnreadCount();
+            }
+        }, 30000);
         return () => clearInterval(interval);
     }, [fetchUnreadCount]);
 

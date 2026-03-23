@@ -85,6 +85,9 @@ export interface Order {
   status: OrderStatus;
   notes?: string;
   deliveryDate?: string;
+  useCustomerAddress?: boolean;
+  deliveryAddress?: string | null;
+  deliveryCity?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -122,16 +125,23 @@ export interface Delivery {
   paymentConfirmedAt?: string;
   paymentLocked: boolean;
   // Digital signature
+  hasSignature?: boolean;
   signatureData?: string | null;
   signatureCapturedAt?: string;
   // GPS payment location
   paymentLatitude?: number | null;
   paymentLongitude?: number | null;
-  gpsTrackingLog: GpsTrackingEntry[];
+  gpsTrackingPoints?: number;
+  gpsTrackingLog?: GpsTrackingEntry[];
   // Incident
   hasDiscrepancy: boolean;
   incidentReport?: string | null;
   incidentReportedAt?: string;
+  incidentReportedBy?: number | null;
+  incidentStatus?: 'open' | 'in_review' | 'resolved' | null;
+  incidentResolutionNotes?: string | null;
+  incidentResolvedAt?: string | null;
+  incidentResolvedBy?: number | null;
   // Cash reconciliation
   cashSubmitted: boolean;
   cashSubmittedAt?: string;
@@ -161,6 +171,51 @@ export interface DriverLocation {
   currentLocation: { latitude: number | null; longitude: number | null };
   activeDeliveries: Delivery[];
   vehicle: { id: number; registration: string } | null;
+}
+
+export interface Incident {
+  id: number;
+  deliveryId: number;
+  deliveryStatus: DeliveryStatus;
+  hasDiscrepancy: boolean;
+  incidentReport: string;
+  incidentStatus: 'open' | 'in_review' | 'resolved' | null;
+  incidentReportedAt?: string;
+  incidentReportedBy?: { id: number; name: string } | null;
+  incidentResolutionNotes?: string | null;
+  incidentResolvedAt?: string | null;
+  incidentResolvedBy?: { id: number; name: string } | null;
+  order?: {
+    id: number;
+    orderNumber: string;
+    customer?: {
+      id: number;
+      name: string;
+      city?: string;
+    } | null;
+  } | null;
+  chauffeur?: {
+    id: number;
+    name: string;
+  } | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Discount {
+  id: number;
+  code: string;
+  name: string;
+  description?: string | null;
+  type: 'percent' | 'fixed';
+  value: number;
+  minOrderAmount: number;
+  maxDiscountAmount?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Vehicle Types
@@ -208,7 +263,7 @@ export interface Payment {
 }
 
 // Kanban Task Types
-export type TaskStatus = 'todo' | 'pending_validation' | 'validated' | 'in_progress' | 'done';
+export type TaskStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface Task {

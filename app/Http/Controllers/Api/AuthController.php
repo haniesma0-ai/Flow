@@ -17,7 +17,7 @@ class AuthController extends Controller
      */
     private function formatUser(User $user): array
     {
-        $user->load('role');
+        $user->loadMissing('role');
 
         return [
             'id' => $user->id,

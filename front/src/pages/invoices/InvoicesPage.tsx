@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
@@ -20,9 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import type { Invoice, InvoiceStatus } from '@/types';
+import type { Invoice, InvoiceStatus, Order } from '@/types';
 import { invoicesService } from '@/services/invoices';
+import { ordersService } from '@/services/orders';
 import { toast } from 'sonner';
 import { generateInvoicePDF, printInvoice, exportInvoicesCSV } from '@/utils/exportUtils';
 
@@ -33,6 +43,15 @@ const InvoicesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [showInvoiceDetails, setShowInvoiceDetails] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+
+  const [showCreateInvoice, setShowCreateInvoice] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
+  const [newInvoiceOrderId, setNewInvoiceOrderId] = useState('');
+  const [newInvoiceDueDate, setNewInvoiceDueDate] = useState('');
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -69,12 +88,75 @@ const InvoicesPage = () => {
     setFilteredInvoices(filtered);
   }, [searchQuery, statusFilter, invoices]);
 
+  const resetCreateInvoiceForm = () => {
+    setNewInvoiceOrderId('');
+    setNewInvoiceDueDate('');
+  };
+
+  const fetchOrders = async () => {
+    setIsLoadingOrders(true);
+    try {
+      const data = await ordersService.getOrders();
+      const list = Array.isArray(data) ? data : [];
+      setOrders(list);
+    } catch (err) {
+      console.error('Failed to load orders:', err);
+      toast.error('Impossible de charger les commandes.');
+    } finally {
+      setIsLoadingOrders(false);
+    }
+  };
+
+  const openCreateInvoiceDialog = async () => {
+    setShowCreateInvoice(true);
+    resetCreateInvoiceForm();
+    await fetchOrders();
+  };
+
+  const openInvoiceDetails = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    setShowInvoiceDetails(true);
+  };
+
+  const handleCreateInvoice = async () => {
+    if (!newInvoiceOrderId || !newInvoiceDueDate) {
+      toast.error('Sélectionne une commande et une date d\'échéance.');
+      return;
+    }
+
+    setIsCreatingInvoice(true);
+    try {
+      const created = await invoicesService.createInvoice({
+        orderId: Number(newInvoiceOrderId),
+        dueDate: newInvoiceDueDate,
+      } as Partial<Invoice>);
+
+      setInvoices((prev) => [created, ...prev]);
+      setShowCreateInvoice(false);
+      resetCreateInvoiceForm();
+      toast.success('Facture créée avec succès.');
+    } catch (err: unknown) {
+      const errorMessage =
+        (err as { response?: { data?: { error?: string; message?: string } } })?.response?.data?.error ||
+        (err as { response?: { data?: { error?: string; message?: string } } })?.response?.data?.message ||
+        'Erreur lors de la création de la facture.';
+      toast.error(errorMessage);
+    } finally {
+      setIsCreatingInvoice(false);
+    }
+  };
+
   const handleStatusChange = async (invoiceId: number, newStatus: string) => {
     try {
       await invoicesService.updateInvoiceStatus(invoiceId, newStatus as InvoiceStatus);
       setInvoices((prev) =>
         prev.map((i) => (i.id === invoiceId ? { ...i, status: newStatus as InvoiceStatus } : i))
       );
+
+      if (selectedInvoice?.id === invoiceId) {
+        setSelectedInvoice((prev) => (prev ? { ...prev, status: newStatus as InvoiceStatus } : prev));
+      }
+
       toast.success(t('invoices.toast.statusUpdated'));
     } catch {
       toast.error(t('invoices.toast.statusError', 'Erreur lors du changement de statut'));
@@ -173,6 +255,11 @@ const InvoicesPage = () => {
     .filter((i) => i.status === 'pending' || i.status === 'overdue')
     .reduce((sum, i) => sum + i.remainingAmount, 0);
 
+  const ordersAlreadyInvoiced = new Set(invoices.map((invoice) => invoice.orderId));
+  const availableOrders = orders.filter(
+    (order) => !ordersAlreadyInvoiced.has(order.id) && order.status !== 'cancelled'
+  );
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -188,7 +275,7 @@ const InvoicesPage = () => {
             <Download className="w-4 h-4 mr-2" />
             {t('common.export')} CSV
           </Button>
-          <Button>
+          <Button onClick={openCreateInvoiceDialog}>
             <Plus className="w-4 h-4 mr-2" />
             {t('invoices.newInvoice')}
           </Button>
@@ -357,7 +444,7 @@ const InvoicesPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => openInvoiceDetails(invoice)}>
                               <Eye className="w-4 h-4 mr-2" />
                               {t('invoices.action.view')}
                             </DropdownMenuItem>
@@ -388,6 +475,163 @@ const InvoicesPage = () => {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={showInvoiceDetails} onOpenChange={setShowInvoiceDetails}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedInvoice?.invoiceNumber || 'Facture'}
+            </DialogTitle>
+            <DialogDescription>
+              Détails de la facture sélectionnée.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedInvoice && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-slate-500">Client</p>
+                  <p className="font-medium text-slate-900">{selectedInvoice.customer?.name || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500">Statut</p>
+                  <div className="mt-1">{getStatusBadge(selectedInvoice.status)}</div>
+                </div>
+                <div>
+                  <p className="text-slate-500">Date</p>
+                  <p className="font-medium text-slate-900">
+                    {new Date(selectedInvoice.createdAt).toLocaleDateString('fr-FR')}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-slate-500">Échéance</p>
+                  <p className="font-medium text-slate-900">
+                    {selectedInvoice.dueDate
+                      ? new Date(selectedInvoice.dueDate).toLocaleDateString('fr-FR')
+                      : 'N/A'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-md border border-slate-200 p-3 space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Montant total</span>
+                  <span className="font-semibold text-slate-900">
+                    {Number(selectedInvoice.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'MAD' })}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Montant payé</span>
+                  <span className="font-medium text-green-700">
+                    {Number(selectedInvoice.paidAmount).toLocaleString('fr-FR', { style: 'currency', currency: 'MAD' })}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Reste à payer</span>
+                  <span className="font-medium text-red-700">
+                    {Number(selectedInvoice.remainingAmount).toLocaleString('fr-FR', { style: 'currency', currency: 'MAD' })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            {selectedInvoice && (
+              <Button variant="outline" onClick={() => handleDownloadPDF(selectedInvoice)}>
+                <Download className="w-4 h-4 mr-2" />
+                PDF
+              </Button>
+            )}
+            {selectedInvoice && (
+              <Button variant="outline" onClick={() => handlePrintInvoice(selectedInvoice)}>
+                <Printer className="w-4 h-4 mr-2" />
+                {t('common.print')}
+              </Button>
+            )}
+            {selectedInvoice && (selectedInvoice.status === 'pending' || selectedInvoice.status === 'overdue') && (
+              <Button onClick={() => handleStatusChange(selectedInvoice.id, 'paid')}>
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                {t('invoices.action.markPaid')}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={showCreateInvoice}
+        onOpenChange={(open) => {
+          setShowCreateInvoice(open);
+          if (!open) {
+            resetCreateInvoiceForm();
+          }
+        }}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{t('invoices.newInvoice')}</DialogTitle>
+            <DialogDescription>
+              Crée une facture à partir d'une commande sans facture.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="orderId">Commande</Label>
+              <Select value={newInvoiceOrderId} onValueChange={setNewInvoiceOrderId}>
+                <SelectTrigger id="orderId">
+                  <SelectValue
+                    placeholder={isLoadingOrders ? 'Chargement...' : 'Sélectionner une commande'}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableOrders.length === 0 ? (
+                    <SelectItem value="__none__" disabled>
+                      Aucune commande disponible
+                    </SelectItem>
+                  ) : (
+                    availableOrders.map((order) => (
+                      <SelectItem key={order.id} value={String(order.id)}>
+                        {order.orderNumber} - {order.customer?.name || 'Client'}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="dueDate">Date d'échéance</Label>
+              <Input
+                id="dueDate"
+                type="date"
+                value={newInvoiceDueDate}
+                onChange={(e) => setNewInvoiceDueDate(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowCreateInvoice(false);
+                resetCreateInvoiceForm();
+              }}
+            >
+              Annuler
+            </Button>
+            <Button
+              onClick={handleCreateInvoice}
+              disabled={isCreatingInvoice || isLoadingOrders || availableOrders.length === 0}
+            >
+              {isCreatingInvoice ? 'Création...' : 'Créer la facture'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

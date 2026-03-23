@@ -105,7 +105,9 @@ const MapTrackingPage = () => {
   useEffect(() => {
     if (autoRefresh) {
       refreshTimerRef.current = setInterval(() => {
-        fetchDriverLocations();
+        if (!document.hidden) {
+          fetchDriverLocations();
+        }
       }, 15000);
     }
     return () => {

@@ -54,6 +54,7 @@ const DeliveriesPage = () => {
   // Detail dialog
   const [detailDelivery, setDetailDelivery] = useState<Delivery | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   // Create dialog
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -84,24 +85,40 @@ const DeliveriesPage = () => {
     }
   }, [t]);
 
+  const hasSignature = (delivery?: Delivery | null) =>
+    Boolean(delivery?.hasSignature || delivery?.signatureData);
+
+  const openDetailDialog = async (delivery: Delivery) => {
+    setDetailDialogOpen(true);
+    setDetailDelivery(delivery);
+    setDetailLoading(true);
+    try {
+      const fullDelivery = await deliveriesService.getDelivery(delivery.id);
+      setDetailDelivery(fullDelivery);
+    } catch {
+      toast.error('Impossible de charger les détails complets.');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     fetchDeliveries();
     // Auto-refresh every 30 seconds
     pollRef.current = setInterval(() => {
+      if (document.hidden) {
+        return;
+      }
+
       deliveriesService.getDeliveries().then(data => {
         const list = Array.isArray(data) ? data : [];
         setDeliveries(list);
-        setFilteredDeliveries(prev => {
-          // Preserve current filter state during polling
-          if (statusFilter !== 'all' || searchQuery) return prev;
-          return list;
-        });
       }).catch(() => { });
     }, 30000);
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, [fetchDeliveries, statusFilter, searchQuery]);
+  }, [fetchDeliveries]);
 
   // Load dropdown data when create dialog opens
   useEffect(() => {
@@ -114,7 +131,13 @@ const DeliveriesPage = () => {
           api.get('/vehicles'),
         ]);
         const orderList = Array.isArray(ordersData) ? ordersData : [];
-        setOrders(orderList.filter(o => o.status === 'confirmed' || o.status === 'preparation'));
+        // Allow selecting orders that are ready for delivery
+        // (confirmed/preparation/delivery), but exclude already delivered/cancelled
+        setOrders(
+          orderList.filter(
+            (o) => !['delivered', 'cancelled', 'draft'].includes(o.status)
+          )
+        );
         setChauffeurs(Array.isArray(chauffeursRes.data) ? chauffeursRes.data : []);
         setVehicles(Array.isArray(vehiclesRes.data) ? vehiclesRes.data : []);
       } catch {
@@ -425,7 +448,7 @@ const DeliveriesPage = () => {
                             {delivery.paymentConfirmed && (
                               <span title="Paiement confirmé"><Banknote className="w-3 h-3 text-green-500" /></span>
                             )}
-                            {delivery.signatureData && (
+                            {hasSignature(delivery) && (
                               <span title="Signé"><PenLine className="w-3 h-3 text-green-500" /></span>
                             )}
                             {delivery.paymentLocked && (
@@ -473,7 +496,7 @@ const DeliveriesPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => { setDetailDelivery(delivery); setDetailDialogOpen(true); }}>
+                            <DropdownMenuItem onClick={() => openDetailDialog(delivery)}>
                               <Eye className="w-4 h-4 mr-2" />
                               Voir détails
                             </DropdownMenuItem>
@@ -515,7 +538,11 @@ const DeliveriesPage = () => {
           <DialogHeader>
             <DialogTitle>Détails de la livraison</DialogTitle>
           </DialogHeader>
-          {detailDelivery && (
+          {detailLoading ? (
+            <div className="flex items-center justify-center py-10">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : detailDelivery && (
             <div className="space-y-4 max-h-[70vh] overflow-y-auto">
               <div className="bg-slate-50 p-3 rounded-lg">
                 <p className="font-medium">{detailDelivery.order?.orderNumber}</p>
@@ -565,8 +592,8 @@ const DeliveriesPage = () => {
                 )}
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Signature</span>
-                  <Badge variant={detailDelivery.signatureData ? 'default' : 'secondary'}>
-                    {detailDelivery.signatureData ? 'Capturée' : 'Non capturée'}
+                  <Badge variant={hasSignature(detailDelivery) ? 'default' : 'secondary'}>
+                    {hasSignature(detailDelivery) ? 'Capturée' : 'Non capturée'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">

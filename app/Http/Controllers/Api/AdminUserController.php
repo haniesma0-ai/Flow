@@ -14,7 +14,12 @@ class AdminUserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::with('role');
+        $perPage = (int) $request->get('per_page', 20);
+        $perPage = min(max($perPage, 1), 100);
+
+        $query = User::query()
+            ->select('id', 'name', 'email', 'role_id', 'phone', 'is_active', 'created_at', 'updated_at')
+            ->with('role:id,name');
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -28,10 +33,10 @@ class AdminUserController extends Controller
             $query->whereHas('role', fn($q) => $q->where('name', $request->role));
         }
 
-        $users = $query->orderBy('created_at', 'desc')->get();
+        $users = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         // Format users for frontend
-        $formatted = $users->map(function ($user) {
+        $formatted = collect($users->items())->map(function ($user) {
             return [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -47,6 +52,13 @@ class AdminUserController extends Controller
         return response()->json([
             'success' => true,
             'data' => $formatted,
+            'pagination' => [
+                'total' => $users->total(),
+                'per_page' => $users->perPage(),
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'has_more' => $users->hasMorePages(),
+            ],
         ]);
     }
 

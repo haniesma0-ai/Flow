@@ -12,6 +12,9 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = (int) $request->get('per_page', 20);
+        $perPage = min(max($perPage, 1), 100);
+
         $query = Customer::query();
 
         // Filtrage par statut actif
@@ -29,9 +32,12 @@ class CustomerController extends Controller
             });
         }
 
-        $customers = $query->orderBy('name')->get();
+        $customers = $query
+            ->select('id', 'code', 'name', 'email', 'phone', 'address', 'city', 'ice', 'rc', 'is_active', 'created_at', 'updated_at')
+            ->orderBy('name')
+            ->paginate($perPage);
 
-        $formatted = $customers->map(function ($customer) {
+        $formatted = collect($customers->items())->map(function ($customer) {
             return [
                 'id' => $customer->id,
                 'code' => $customer->code,
@@ -51,6 +57,13 @@ class CustomerController extends Controller
         return response()->json([
             'success' => true,
             'data' => $formatted,
+            'pagination' => [
+                'total' => $customers->total(),
+                'per_page' => $customers->perPage(),
+                'current_page' => $customers->currentPage(),
+                'last_page' => $customers->lastPage(),
+                'has_more' => $customers->hasMorePages(),
+            ],
         ]);
     }
 

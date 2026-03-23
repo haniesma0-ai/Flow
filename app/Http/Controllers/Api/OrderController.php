@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Notification;
@@ -15,7 +16,11 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['customer', 'commercial', 'items.product']);
+        $perPage = (int) $request->get('per_page', 20);
+        $perPage = min($perPage, 100); // Cap at 100
+
+        $query = Order::select('id', 'order_number', 'customer_id', 'commercial_id', 'subtotal', 'total_tva', 'total', 'status', 'notes', 'delivery_date', 'use_customer_address', 'delivery_address', 'delivery_city', 'created_at', 'updated_at')
+            ->with(['customer:id,name,email,phone,city', 'commercial:id,name']);
 
         // Filtrage par statut
         if ($request->has('status')) {
@@ -38,9 +43,9 @@ class OrderController extends Controller
             });
         }
 
-        $orders = $query->orderBy('created_at', 'desc')->get();
+        $orders = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
-        $formatted = $orders->map(function ($order) {
+        $formatted = collect($orders->items())->map(function ($order) {
             return [
                 'id' => $order->id,
                 'orderNumber' => $order->order_number,
@@ -57,29 +62,15 @@ class OrderController extends Controller
                     'id' => $order->commercial->id,
                     'name' => $order->commercial->name,
                 ] : null,
-                'items' => $order->items->map(function ($item) {
-                    return [
-                        'id' => $item->id,
-                        'productId' => $item->product_id,
-                        'product' => $item->product ? [
-                            'id' => $item->product->id,
-                            'name' => $item->product->name,
-                            'code' => $item->product->code,
-                            'price' => (float) $item->product->price,
-                            'unit' => $item->product->unit,
-                        ] : null,
-                        'quantity' => (int) $item->quantity,
-                        'price' => (float) $item->price,
-                        'tva' => (float) $item->tva_rate,
-                        'total' => (float) $item->total,
-                    ];
-                }),
                 'subtotal' => (float) $order->subtotal,
                 'totalTva' => (float) $order->total_tva,
                 'total' => (float) $order->total,
                 'status' => $order->status,
                 'notes' => $order->notes,
                 'deliveryDate' => $order->delivery_date?->toISOString() ?? $order->delivery_date,
+                'useCustomerAddress' => (bool) ($order->use_customer_address ?? true),
+                'deliveryAddress' => $order->delivery_address,
+                'deliveryCity' => $order->delivery_city,
                 'createdAt' => $order->created_at?->toISOString(),
                 'updatedAt' => $order->updated_at?->toISOString(),
             ];
@@ -88,6 +79,13 @@ class OrderController extends Controller
         return response()->json([
             'success' => true,
             'data' => $formatted,
+            'pagination' => [
+                'total' => $orders->total(),
+                'per_page' => $orders->perPage(),
+                'current_page' => $orders->currentPage(),
+                'last_page' => $orders->lastPage(),
+                'has_more' => $orders->hasMorePages(),
+            ],
         ]);
     }
 
@@ -96,10 +94,13 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'customer_id' => 'required|exists:customers,id',
             'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.productId' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
             'notes' => 'nullable|string',
-            'delivery_date' => 'nullable|date|after_or_equal:today',
+            'deliveryDate' => 'nullable|date|after_or_equal:today',
+            'use_customer_address' => 'sometimes|boolean',
+            'delivery_address' => 'required_if:use_customer_address,false|nullable|string|max:500',
+            'delivery_city' => 'nullable|string|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -110,23 +111,44 @@ class OrderController extends Controller
             ], 422);
         }
 
+        $customer = Customer::findOrFail($request->customer_id);
+        $useCustomerAddress = $request->boolean('use_customer_address', true);
+        $deliveryAddress = $useCustomerAddress
+            ? trim((string) ($customer->address ?? ''))
+            : trim((string) $request->input('delivery_address', ''));
+        $deliveryCity = $useCustomerAddress
+            ? trim((string) ($customer->city ?? ''))
+            : trim((string) $request->input('delivery_city', ''));
+
+        if (!$useCustomerAddress && $deliveryAddress === '') {
+            return response()->json([
+                'success' => false,
+                'error' => 'Veuillez renseigner une adresse de livraison personnalisée.',
+            ], 422);
+        }
+
         DB::beginTransaction();
         try {
-            // Générer le numéro de commande
-            $orderNumber = 'ORD-' . date('Y') . '-' . str_pad(Order::count() + 1, 4, '0', STR_PAD_LEFT);
+            // Générer le numéro de commande unique
+            $orderNumber = null;
+            $counter = Order::count() + 1;
+            do {
+                $orderNumber = 'ORD-' . date('Y') . '-' . str_pad($counter, 4, '0', STR_PAD_LEFT);
+                $counter++;
+            } while (Order::where('order_number', $orderNumber)->exists());
 
             // Calculer les totaux
             $subtotal = 0;
             $totalTva = 0;
 
             // Pre-fetch all products to avoid N+1 queries
-            $productIds = collect($request->items)->pluck('product_id')->unique();
+            $productIds = collect($request->items)->pluck('productId')->unique();
             $products = \App\Models\Product::whereIn('id', $productIds)->get()->keyBy('id');
 
             foreach ($request->items as $item) {
-                $product = $products[$item['product_id']] ?? null;
+                $product = $products[$item['productId']] ?? null;
                 if (!$product) {
-                    throw new \Exception('Product not found: ' . $item['product_id']);
+                    throw new \Exception('Product not found: ' . $item['productId']);
                 }
                 $itemTotal = $product->price * $item['quantity'];
                 $itemTva = $itemTotal * ($product->tva_rate / 100);
@@ -147,18 +169,21 @@ class OrderController extends Controller
                 'total' => $total,
                 'status' => 'draft',
                 'notes' => $request->notes,
-                'delivery_date' => $request->delivery_date,
+                'delivery_date' => $request->deliveryDate,
+                'use_customer_address' => $useCustomerAddress,
+                'delivery_address' => $deliveryAddress !== '' ? $deliveryAddress : null,
+                'delivery_city' => $deliveryCity !== '' ? $deliveryCity : null,
             ]);
 
             // Créer les items de commande
             foreach ($request->items as $item) {
-                $product = $products[$item['product_id']];
+                $product = $products[$item['productId']];
                 $itemTotal = $product->price * $item['quantity'];
                 $itemTva = $itemTotal * ($product->tva_rate / 100);
 
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id' => $item['product_id'],
+                    'product_id' => $item['productId'],
                     'quantity' => $item['quantity'],
                     'price' => $product->price,
                     'tva_rate' => $product->tva_rate,
@@ -175,7 +200,7 @@ class OrderController extends Controller
                 ['admin', 'manager'],
                 'order',
                 'Nouvelle commande',
-                "Commande {$orderNumber} créée par " . auth()->user()->name . " pour {$customerName} — " . number_format($order->total, 2) . ' MAD',
+                "Commande {$orderNumber} créée par " . auth()->user()->name . " pour {$customerName} — " . number_format((float) ($order->total ?? 0), 2) . ' MAD',
                 '/dashboard/orders/' . $order->id
             );
             // Notify the commercial who created it (if different from admin)
@@ -197,7 +222,12 @@ class OrderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['error' => 'Failed to create order'], 500);
+            \Log::error('Failed to create order: ' . $e->getMessage(), [
+                'user_id' => auth()->id(),
+                'request_data' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Failed to create order: ' . $e->getMessage()], 500);
         }
     }
 
@@ -246,6 +276,9 @@ class OrderController extends Controller
             'status' => $order->status,
             'notes' => $order->notes,
             'deliveryDate' => $order->delivery_date?->toISOString() ?? $order->delivery_date,
+            'useCustomerAddress' => (bool) ($order->use_customer_address ?? true),
+            'deliveryAddress' => $order->delivery_address,
+            'deliveryCity' => $order->delivery_city,
             'createdAt' => $order->created_at?->toISOString(),
             'updatedAt' => $order->updated_at?->toISOString(),
         ];
@@ -265,6 +298,9 @@ class OrderController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             'notes' => 'nullable|string',
             'delivery_date' => 'nullable|date|after_or_equal:today',
+            'use_customer_address' => 'sometimes|boolean',
+            'delivery_address' => 'required_if:use_customer_address,false|nullable|string|max:500',
+            'delivery_city' => 'nullable|string|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -324,7 +360,29 @@ class OrderController extends Controller
                 }
             }
 
-            $order->update($request->only(['customer_id', 'notes', 'delivery_date']));
+            $updates = $request->only(['customer_id', 'notes', 'delivery_date']);
+
+            if ($request->has('use_customer_address')) {
+                $useCustomerAddress = $request->boolean('use_customer_address');
+                $updates['use_customer_address'] = $useCustomerAddress;
+
+                if ($useCustomerAddress) {
+                    $customerId = $request->input('customer_id', $order->customer_id);
+                    $customer = Customer::find($customerId);
+                    $updates['delivery_address'] = $customer?->address;
+                    $updates['delivery_city'] = $customer?->city;
+                }
+            }
+
+            if ($request->has('delivery_address')) {
+                $updates['delivery_address'] = $request->input('delivery_address');
+            }
+
+            if ($request->has('delivery_city')) {
+                $updates['delivery_city'] = $request->input('delivery_city');
+            }
+
+            $order->update($updates);
 
             DB::commit();
 
@@ -397,7 +455,7 @@ class OrderController extends Controller
             );
         }
 
-        // If delivery status, notify chauffeurs
+        // If delivery status, notify chauffeurs and create a delivery record (if none exists)
         if ($request->status === 'delivery') {
             Notification::notifyRole(
                 ['chauffeur'],
@@ -406,6 +464,23 @@ class OrderController extends Controller
                 "Commande {$order->order_number} pour {$customerName} est prête à être livrée.",
                 '/dashboard/deliveries'
             );
+
+            // Create a Delivery record to make it visible in the deliveries dashboard
+            if (!$order->delivery) {
+                $chauffeur = \App\Models\User::whereHas('role', fn($q) => $q->where('name', 'chauffeur'))->first();
+                $vehicle = \App\Models\Vehicle::first();
+
+                if ($chauffeur && $vehicle) {
+                    \App\Models\Delivery::create([
+                        'order_id' => $order->id,
+                        'chauffeur_id' => $chauffeur->id,
+                        'vehicle_id' => $vehicle->id,
+                        'status' => 'planned',
+                        'planned_date' => $order->delivery_date ?? now(),
+                        'notes' => 'Créé automatiquement lors du passage en livraison',
+                    ]);
+                }
+            }
         }
 
         return response()->json([

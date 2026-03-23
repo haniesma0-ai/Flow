@@ -46,6 +46,7 @@ const ChauffeurDashboard = () => {
   // Delivery detail dialog
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [detailDelivery, setDetailDelivery] = useState<Delivery | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   // GPS tracking for active deliveries
   const activeDeliveryId = deliveries.find(d => d.status === 'in_progress')?.id;
@@ -86,10 +87,31 @@ const ChauffeurDashboard = () => {
     }
   }, [t]);
 
+  const hasSignature = (delivery?: Delivery | null) =>
+    Boolean(delivery?.hasSignature || delivery?.signatureData);
+
+  const openDetailDialog = async (delivery: Delivery) => {
+    setDetailDialogOpen(true);
+    setDetailDelivery(delivery);
+    setDetailLoading(true);
+    try {
+      const fullDelivery = await deliveriesService.getDelivery(delivery.id);
+      setDetailDelivery(fullDelivery);
+    } catch {
+      toast.error('Impossible de charger les détails complets.');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchDeliveries();
     // Auto-refresh every 30 seconds
-    pollRef.current = setInterval(() => fetchDeliveries(true), 30000);
+    pollRef.current = setInterval(() => {
+      if (!document.hidden) {
+        fetchDeliveries(true);
+      }
+    }, 30000);
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
@@ -151,12 +173,36 @@ const ChauffeurDashboard = () => {
   const handleConfirmPayment = async () => {
     if (!paymentDelivery) return;
     setPaymentSubmitting(true);
+
+    const amount = parseFloat(collectedAmount);
+    if (Number.isNaN(amount)) {
+      toast.error('Montant invalide.');
+      setPaymentSubmitting(false);
+      return;
+    }
+
+    // Try to use the most recent GPS position, but allow proceeding if unavailable.
+    let latitude: number | undefined;
+    let longitude: number | undefined;
+
     try {
       const pos = await getCurrentPosition();
+      latitude = pos.latitude;
+      longitude = pos.longitude;
+    } catch (err) {
+      if (position) {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      } else {
+        toast.warning('Impossible de récupérer la localisation GPS. Le paiement sera confirmé sans coordonnées.');
+      }
+    }
+
+    try {
       const updated = await deliveriesService.confirmPayment(paymentDelivery.id, {
-        collected_amount: parseFloat(collectedAmount),
-        latitude: pos.latitude,
-        longitude: pos.longitude,
+        collected_amount: amount,
+        latitude,
+        longitude,
       });
       setDeliveries(prev => prev.map(d => d.id === paymentDelivery.id ? { ...d, ...updated } : d));
       setPaymentDialogOpen(false);
@@ -165,8 +211,12 @@ const ChauffeurDashboard = () => {
       } else {
         toast.success('Paiement confirmé avec succès.');
       }
-    } catch {
-      toast.error('Erreur lors de la confirmation du paiement.');
+    } catch (err: unknown) {
+      const message = (err as any)?.response?.data?.error
+        || (err as any)?.response?.data?.message
+        || (err as Error).message
+        || 'Erreur lors de la confirmation du paiement.';
+      toast.error(message);
     } finally {
       setPaymentSubmitting(false);
     }
@@ -208,7 +258,7 @@ const ChauffeurDashboard = () => {
       openPaymentDialog(delivery);
       return;
     }
-    if (!delivery.signatureData) {
+    if (!hasSignature(delivery)) {
       toast.error('La signature du client est requise avant de terminer la livraison.');
       openSignatureDialog(delivery);
       return;
@@ -390,10 +440,10 @@ const ChauffeurDashboard = () => {
                   {delivery.paymentConfirmed ? 'Paiement confirmé' : 'Paiement en attente'}
                 </div>
                 {/* Signature status */}
-                <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded ${delivery.signatureData ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded ${hasSignature(delivery) ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
                   }`}>
                   <PenLine className="w-3 h-3" />
-                  {delivery.signatureData ? 'Signé' : 'Signature requise'}
+                  {hasSignature(delivery) ? 'Signé' : 'Signature requise'}
                 </div>
               </div>
             </div>
@@ -428,7 +478,7 @@ const ChauffeurDashboard = () => {
                 </Button>
               )}
 
-              {delivery.paymentConfirmed && !delivery.signatureData && (
+              {delivery.paymentConfirmed && !hasSignature(delivery) && (
                 <Button
                   className="bg-purple-600 hover:bg-purple-700"
                   size="sm"
@@ -439,7 +489,7 @@ const ChauffeurDashboard = () => {
                 </Button>
               )}
 
-              {delivery.paymentConfirmed && delivery.signatureData && (
+              {delivery.paymentConfirmed && hasSignature(delivery) && (
                 <Button
                   className="bg-green-600 hover:bg-green-700 col-span-2"
                   onClick={() => handleCompleteDelivery(delivery.id)}
@@ -604,7 +654,7 @@ const ChauffeurDashboard = () => {
                 <div
                   key={delivery.id}
                   className="flex items-center justify-between p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100"
-                  onClick={() => { setDetailDelivery(delivery); setDetailDialogOpen(true); }}
+                          onClick={() => openDetailDialog(delivery)}
                 >
                   <div className="flex items-center gap-3">
                     <div>
@@ -619,7 +669,7 @@ const ChauffeurDashboard = () => {
                         {delivery.paymentConfirmed && (
                           <Shield className="w-3 h-3 text-green-500" />
                         )}
-                        {delivery.signatureData && (
+                        {hasSignature(delivery) && (
                           <PenLine className="w-3 h-3 text-green-500" />
                         )}
                         {delivery.cashSubmitted && (
@@ -654,7 +704,7 @@ const ChauffeurDashboard = () => {
                 <div
                   key={delivery.id}
                   className="flex items-center justify-between p-3 bg-red-50 rounded-lg cursor-pointer hover:bg-red-100"
-                  onClick={() => { setDetailDelivery(delivery); setDetailDialogOpen(true); }}
+                  onClick={() => openDetailDialog(delivery)}
                 >
                   <div>
                     <p className="font-medium text-slate-900">{delivery.order?.orderNumber}</p>
@@ -851,7 +901,11 @@ const ChauffeurDashboard = () => {
           <DialogHeader>
             <DialogTitle>Détails de la livraison</DialogTitle>
           </DialogHeader>
-          {detailDelivery && (
+          {detailLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : detailDelivery && (
             <div className="space-y-4">
               <div className="bg-slate-50 p-3 rounded-lg">
                 <p className="font-medium">{detailDelivery.order?.orderNumber}</p>
@@ -877,8 +931,8 @@ const ChauffeurDashboard = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Signature</span>
-                  <Badge variant={detailDelivery.signatureData ? 'default' : 'secondary'}>
-                    {detailDelivery.signatureData ? 'Capturée' : 'Non capturée'}
+                  <Badge variant={hasSignature(detailDelivery) ? 'default' : 'secondary'}>
+                    {hasSignature(detailDelivery) ? 'Capturée' : 'Non capturée'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">

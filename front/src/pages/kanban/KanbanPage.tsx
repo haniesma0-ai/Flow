@@ -33,10 +33,9 @@ import { toast } from 'sonner';
 
 const columnDefs: { id: TaskStatus; titleKey: string; color: string }[] = [
   { id: 'todo', titleKey: 'kanban.column.todo', color: 'bg-slate-100' },
-  { id: 'pending_validation', titleKey: 'kanban.column.pendingValidation', color: 'bg-amber-50' },
-  { id: 'validated', titleKey: 'kanban.column.validated', color: 'bg-blue-50' },
   { id: 'in_progress', titleKey: 'kanban.column.inProgress', color: 'bg-purple-50' },
   { id: 'done', titleKey: 'kanban.column.done', color: 'bg-green-50' },
+  { id: 'cancelled', titleKey: 'status.cancelled', color: 'bg-red-50' },
 ];
 
 const priorityColors: Record<TaskPriority, string> = {

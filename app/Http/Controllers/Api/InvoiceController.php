@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Models\Order;
 use App\Models\Notification;
 use App\Models\Payment;
 use Illuminate\Http\Request;
@@ -13,6 +14,54 @@ use Illuminate\Support\Facades\Validator;
 
 class InvoiceController extends Controller
 {
+    private function generateInvoiceNumber(): string
+    {
+        // Use atomic counter based on MAX invoice number this year (faster than COUNT + loop)
+        $maxCounter = Invoice::selectRaw(
+            'MAX(CAST(SUBSTRING_INDEX(invoice_number, "-", -1) AS UNSIGNED)) as max_counter'
+        )->whereYear('created_at', now()->year)->value('max_counter') ?? 0;
+
+        return 'INV-' . date('Y') . '-' . str_pad($maxCounter + 1, 4, '0', STR_PAD_LEFT);
+    }
+
+    private function syncMissingInvoicesFromOrders(): void
+    {
+        $orders = Order::query()
+            ->whereNotIn('status', ['cancelled'])
+            ->whereDoesntHave('invoice')
+            ->select('id', 'customer_id', 'total', 'delivery_date')
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return;
+        }
+
+        DB::transaction(function () use ($orders) {
+            // Get starting counter once instead of per iteration
+            $counter = Invoice::selectRaw(
+                'MAX(CAST(SUBSTRING_INDEX(invoice_number, "-", -1) AS UNSIGNED)) as max_counter'
+            )->whereYear('created_at', now()->year)->value('max_counter') ?? 0;
+
+            // Batch insert all invoices at once (1 query instead of N)
+            $invoices = $orders->map(function ($order) use (&$counter) {
+                $counter++;
+                return [
+                    'invoice_number' => 'INV-' . date('Y') . '-' . str_pad($counter, 4, '0', STR_PAD_LEFT),
+                    'order_id' => $order->id,
+                    'customer_id' => $order->customer_id,
+                    'amount' => $order->total,
+                    'paid_amount' => 0,
+                    'status' => 'pending',
+                    'due_date' => $order->delivery_date ?? now()->addDays(30),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
+
+            Invoice::insert($invoices);
+        });
+    }
+
     private function formatInvoice($invoice)
     {
         return [
@@ -39,7 +88,19 @@ class InvoiceController extends Controller
 
     public function index(Request $request)
     {
-        $query = Invoice::with(['order.customer', 'customer']);
+        // Optional maintenance action: keep disabled by default to avoid write-heavy work on read path.
+        if ($request->boolean('sync', false)) {
+            $this->syncMissingInvoicesFromOrders();
+        }
+
+        $perPage = (int) $request->get('per_page', 20);
+        $perPage = min(max($perPage, 1), 100);
+
+        $query = Invoice::with([
+            'order:id,customer_id,order_number,total,status,created_at',
+            'order.customer:id,name,email,phone',
+            'customer:id,name,email,phone',
+        ]);
 
         // Filtrage par statut
         if ($request->has('status')) {
@@ -62,28 +123,35 @@ class InvoiceController extends Controller
             });
         }
 
-        $invoices = $query->orderBy('created_at', 'desc')->get();
+        $invoices = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
-        $formatted = $invoices->map(fn($invoice) => $this->formatInvoice($invoice));
+        $formatted = collect($invoices->items())->map(fn($invoice) => $this->formatInvoice($invoice));
 
         return response()->json([
             'success' => true,
             'data' => $formatted,
+            'pagination' => [
+                'total' => $invoices->total(),
+                'per_page' => $invoices->perPage(),
+                'current_page' => $invoices->currentPage(),
+                'last_page' => $invoices->lastPage(),
+                'has_more' => $invoices->hasMorePages(),
+            ],
         ]);
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'order_id' => 'required|exists:orders,id',
-            'due_date' => 'required|date|after_or_equal:today',
+            'orderId' => 'required|exists:orders,id',
+            'dueDate' => 'required|date|after_or_equal:today',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'error' => $validator->errors()->first(), 'errors' => $validator->errors()], 422);
         }
 
-        $order = \App\Models\Order::find($request->order_id);
+        $order = \App\Models\Order::find($request->orderId);
 
         // Vérifier si une facture existe déjà pour cette commande
         if ($order->invoice()->exists()) {
@@ -91,16 +159,16 @@ class InvoiceController extends Controller
         }
 
         // Générer le numéro de facture
-        $invoiceNumber = 'INV-' . date('Y') . '-' . str_pad(Invoice::count() + 1, 4, '0', STR_PAD_LEFT);
+        $invoiceNumber = $this->generateInvoiceNumber();
 
         $invoice = Invoice::create([
             'invoice_number' => $invoiceNumber,
-            'order_id' => $request->order_id,
+            'order_id' => $request->orderId,
             'customer_id' => $order->customer_id,
             'amount' => $order->total,
             'paid_amount' => 0,
             'status' => 'pending',
-            'due_date' => $request->due_date,
+            'due_date' => $request->dueDate,
         ]);
 
         $customerName = $order->customer->name ?? 'Client';
@@ -144,14 +212,14 @@ class InvoiceController extends Controller
     public function update(Request $request, Invoice $invoice)
     {
         $validator = Validator::make($request->all(), [
-            'due_date' => 'sometimes|date|after_or_equal:today',
+            'dueDate' => 'sometimes|date|after_or_equal:today',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'error' => $validator->errors()->first(), 'errors' => $validator->errors()], 422);
         }
 
-        $invoice->update($request->only(['due_date']));
+        $invoice->update($request->only(['dueDate']));
         $invoice->load(['order.customer', 'customer']);
 
         return response()->json([
@@ -204,9 +272,9 @@ class InvoiceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'amount' => 'required|numeric|min:0.01',
-            'method' => 'required|in:cash,bank_transfer,check,credit_card',
+            'paymentMethod' => 'required|in:cash,bank_transfer,check,credit_card',
             'reference' => 'nullable|string',
-            'payment_date' => 'required|date',
+            'paymentDate' => 'required|date',
             'notes' => 'nullable|string',
         ]);
 
@@ -221,9 +289,9 @@ class InvoiceController extends Controller
         $payment = Payment::create([
             'invoice_id' => $invoice->id,
             'amount' => $request->amount,
-            'payment_method' => $request->method,
+            'payment_method' => $request->paymentMethod,
             'reference' => $request->reference,
-            'payment_date' => $request->payment_date,
+            'payment_date' => $request->paymentDate,
             'notes' => $request->notes,
         ]);
 

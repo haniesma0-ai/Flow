@@ -5,22 +5,26 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class NotificationController extends Controller
 {
     /**
-     * Get the authenticated user's notifications (latest 50).
+     * Get the authenticated user's notifications with pagination.
      */
     public function index(Request $request)
     {
+        $perPage = (int) $request->get('per_page', 20);
+        $perPage = min($perPage, 100); // Cap at 100
+
         $notifications = Notification::where('user_id', $request->user()->id)
+            ->select('id', 'type', 'title', 'message', 'link', 'read', 'created_at')
             ->orderBy('created_at', 'desc')
-            ->limit(50)
-            ->get();
+            ->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data' => $notifications->map(fn($n) => [
+            'data' => collect($notifications->items())->map(fn($n) => [
                 'id' => $n->id,
                 'type' => $n->type,
                 'title' => $n->title,
@@ -29,6 +33,13 @@ class NotificationController extends Controller
                 'read' => $n->read,
                 'createdAt' => $n->created_at->toISOString(),
             ]),
+            'pagination' => [
+                'total' => $notifications->total(),
+                'per_page' => $notifications->perPage(),
+                'current_page' => $notifications->currentPage(),
+                'last_page' => $notifications->lastPage(),
+                'has_more' => $notifications->hasMorePages(),
+            ],
         ]);
     }
 
@@ -38,7 +49,7 @@ class NotificationController extends Controller
     public function unreadCount(Request $request)
     {
         $count = Notification::where('user_id', $request->user()->id)
-            ->unread()
+            ->where('read', false)
             ->count();
 
         return response()->json([

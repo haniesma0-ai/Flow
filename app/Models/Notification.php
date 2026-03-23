@@ -40,15 +40,23 @@ class Notification extends Model
             $q->whereIn('name', $roles);
         })->where('is_active', true)->get();
 
-        foreach ($users as $user) {
-            self::create([
-                'user_id' => $user->id,
-                'type' => $type,
-                'title' => $title,
-                'message' => $message,
-                'link' => $link,
-            ]);
+        if ($users->isEmpty()) {
+            return;
         }
+
+        $now = now();
+        $payload = $users->map(fn($user) => [
+            'user_id' => $user->id,
+            'type' => $type,
+            'title' => $title,
+            'message' => $message,
+            'link' => $link,
+            'read' => false,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ])->all();
+
+        self::insert($payload);
     }
 
     // ── Helper: send notification to a specific user ──────────
