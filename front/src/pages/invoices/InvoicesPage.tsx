@@ -33,16 +33,19 @@ import { Badge } from '@/components/ui/badge';
 import type { Invoice, InvoiceStatus, Order } from '@/types';
 import { invoicesService } from '@/services/invoices';
 import { ordersService } from '@/services/orders';
+import type { PaginationMeta } from '@/services/api';
 import { toast } from 'sonner';
 import { generateInvoicePDF, printInvoice, exportInvoicesCSV } from '@/utils/exportUtils';
 
 const InvoicesPage = () => {
   const { t } = useTranslation();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [reloadTick, setReloadTick] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationMeta | null>(null);
   const [showInvoiceDetails, setShowInvoiceDetails] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
@@ -54,39 +57,45 @@ const InvoicesPage = () => {
   const [newInvoiceDueDate, setNewInvoiceDueDate] = useState('');
 
   useEffect(() => {
-    const fetchInvoices = async () => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
+
+  useEffect(() => {
+    let isActive = true;
+    const timer = setTimeout(async () => {
+      setIsLoading(true);
       try {
-        const data = await invoicesService.getInvoices();
-        const list = Array.isArray(data) ? data : [];
-        setInvoices(list);
-        setFilteredInvoices(list);
+        const { items, pagination: pageMeta } = await invoicesService.getInvoicesPage({
+          page: currentPage,
+          per_page: 20,
+          status: statusFilter !== 'all' ? statusFilter : undefined,
+          search: searchQuery || undefined,
+        });
+
+        if (!isActive) {
+          return;
+        }
+
+        setInvoices(items);
+        setPagination(pageMeta);
       } catch (err) {
+        if (!isActive) {
+          return;
+        }
         console.error('Failed to load invoices:', err);
         toast.error(t('invoices.toast.loadError'));
       } finally {
-        setIsLoading(false);
+        if (isActive) {
+          setIsLoading(false);
+        }
       }
+    }, 250);
+
+    return () => {
+      isActive = false;
+      clearTimeout(timer);
     };
-    fetchInvoices();
-  }, []);
-
-  useEffect(() => {
-    let filtered = invoices;
-
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (i) =>
-          i.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          i.customer.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((i) => i.status === statusFilter);
-    }
-
-    setFilteredInvoices(filtered);
-  }, [searchQuery, statusFilter, invoices]);
+  }, [currentPage, reloadTick, searchQuery, statusFilter, t]);
 
   const resetCreateInvoiceForm = () => {
     setNewInvoiceOrderId('');
@@ -126,14 +135,15 @@ const InvoicesPage = () => {
 
     setIsCreatingInvoice(true);
     try {
-      const created = await invoicesService.createInvoice({
+      await invoicesService.createInvoice({
         orderId: Number(newInvoiceOrderId),
         dueDate: newInvoiceDueDate,
       } as Partial<Invoice>);
 
-      setInvoices((prev) => [created, ...prev]);
       setShowCreateInvoice(false);
       resetCreateInvoiceForm();
+      setCurrentPage(1);
+      setReloadTick((value) => value + 1);
       toast.success('Facture créée avec succès.');
     } catch (err: unknown) {
       const errorMessage =
@@ -215,7 +225,7 @@ const InvoicesPage = () => {
   const handleExportCSV = () => {
     try {
       exportInvoicesCSV(
-        filteredInvoices.map((i) => ({
+        invoices.map((i) => ({
           invoiceNumber: i.invoiceNumber,
           customerName: i.customer.name,
           date: i.createdAt,
@@ -394,14 +404,14 @@ const InvoicesPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {filteredInvoices.length === 0 ? (
+                {invoices.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
                       {t('invoices.noInvoicesFound')}
                     </td>
                   </tr>
                 ) : (
-                  filteredInvoices.map((invoice) => (
+                  invoices.map((invoice) => (
                     <tr key={invoice.id} className="hover:bg-slate-50">
                       <td className="px-4 py-3">
                         <span className="font-medium text-slate-900">
@@ -473,6 +483,31 @@ const InvoicesPage = () => {
               </tbody>
             </table>
           </div>
+          {pagination && pagination.last_page > 1 && (
+            <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3">
+              <p className="text-sm text-slate-600">
+                Page {pagination.current_page} / {pagination.last_page} ({pagination.total} factures)
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={pagination.current_page <= 1 || isLoading}
+                  onClick={() => setCurrentPage((value) => Math.max(1, value - 1))}
+                >
+                  Précédent
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={!pagination.has_more || isLoading}
+                  onClick={() => setCurrentPage((value) => value + 1)}
+                >
+                  Suivant
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

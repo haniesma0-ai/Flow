@@ -1,10 +1,26 @@
 import api from './api';
 import type { Invoice, InvoiceStatus } from '@/types';
+import type { PaginatedResult, PaginationMeta } from './api';
+
+interface GetInvoicesParams {
+    page?: number;
+    per_page?: number;
+    status?: string;
+    search?: string;
+}
 
 export const invoicesService = {
-    async getInvoices(): Promise<Invoice[]> {
-        const response = await api.get('/invoices');
+    async getInvoices(params?: GetInvoicesParams): Promise<Invoice[]> {
+        const response = await api.get('/invoices', { params });
         return response.data;
+    },
+
+    async getInvoicesPage(params?: GetInvoicesParams): Promise<PaginatedResult<Invoice>> {
+        const response = await api.get('/invoices', { params });
+        return {
+            items: Array.isArray(response.data) ? response.data : [],
+            pagination: ((response as unknown as { pagination?: PaginationMeta }).pagination ?? null),
+        };
     },
 
     async getInvoice(id: number): Promise<Invoice> {

@@ -1,4 +1,17 @@
-import axios from 'axios';
+import axios, { type AxiosResponse } from 'axios';
+
+export interface PaginationMeta {
+  total: number;
+  per_page: number;
+  current_page: number;
+  last_page: number;
+  has_more: boolean;
+}
+
+export interface PaginatedResult<T> {
+  items: T[];
+  pagination: PaginationMeta | null;
+}
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost/fox_petroleum/public/api',
@@ -25,7 +38,16 @@ api.interceptors.response.use(
       'success' in response.data &&
       'data' in response.data
     ) {
+      const pagination =
+        'pagination' in response.data && response.data.pagination
+          ? (response.data.pagination as PaginationMeta)
+          : null;
+
       response.data = response.data.data;
+
+      if (pagination) {
+        (response as AxiosResponse & { pagination?: PaginationMeta }).pagination = pagination;
+      }
     }
     return response;
   },
