@@ -70,10 +70,10 @@ const DeliveriesPage = () => {
     notes: '',
   });
 
-  const fetchDeliveries = useCallback(async () => {
+  const fetchDeliveries = useCallback(async (force = false) => {
     setIsLoading(true);
     try {
-      const data = await deliveriesService.getDeliveries();
+      const data = await deliveriesService.getDeliveries({ force });
       const list = Array.isArray(data) ? data : [];
       setDeliveries(list);
       setFilteredDeliveries(list);
@@ -164,7 +164,7 @@ const DeliveriesPage = () => {
       toast.success(t('deliveries.toast.created'));
       setCreateDialogOpen(false);
       setNewDelivery({ order_id: '', chauffeur_id: '', vehicle_id: '', planned_date: '', notes: '' });
-      fetchDeliveries();
+      fetchDeliveries(true);
     } catch {
       toast.error(t('deliveries.toast.createError'));
     } finally {
@@ -193,11 +193,7 @@ const DeliveriesPage = () => {
   const handleStatusChange = async (deliveryId: number, newStatus: DeliveryStatus) => {
     try {
       await deliveriesService.updateDeliveryStatus(deliveryId, newStatus);
-      setDeliveries((prev) =>
-        prev.map((d) =>
-          d.id === deliveryId ? { ...d, status: newStatus } : d
-        )
-      );
+      setDeliveries((prev) => prev.map((d) => (d.id === deliveryId ? { ...d, status: newStatus } : d)));
       toast.success(t('deliveries.toast.statusUpdated'));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur';
@@ -254,7 +250,7 @@ const DeliveriesPage = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={fetchDeliveries} disabled={isLoading}>
+          <Button variant="outline" size="sm" onClick={() => fetchDeliveries(true)} disabled={isLoading}>
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             {t('common.refresh')}
           </Button>
