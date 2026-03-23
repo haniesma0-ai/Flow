@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
         $managerRole = Role::where('name', 'manager')->first();
         $commercialRole = Role::where('name', 'commercial')->first();
         $chauffeurRole = Role::where('name', 'chauffeur')->first();
-        $userRole = Role::where('name', 'user')->first();
+        $clientRole = Role::where('name', 'client')->first() ?? Role::where('name', 'user')->first();
 
         $defaultPassword = Hash::make('password');
 
@@ -47,12 +47,16 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Client Test',
                 'email' => 'client@foxpetroleum.com',
-                'role_id' => $userRole->id,
+                'role_id' => $clientRole?->id,
                 'phone' => '+212 522-000005',
             ],
         ];
 
         foreach ($users as $userData) {
+            if (!$userData['role_id']) {
+                continue;
+            }
+
             User::updateOrCreate(
                 ['email' => $userData['email']],
                 [
