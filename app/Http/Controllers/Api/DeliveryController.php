@@ -8,11 +8,16 @@ use App\Models\AuditLog;
 use App\Models\Delivery;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class DeliveryController extends Controller
 {
-    private function formatDelivery($delivery)
+    /**
+     * @param bool $includeGpsLog  Pass false in list/tracking responses to avoid
+     *                             sending potentially large GPS history arrays.
+     */
+    private function formatDelivery($delivery, bool $includeGpsLog = false)
     {
         return [
             'id' => $delivery->id,
@@ -60,7 +65,7 @@ class DeliveryController extends Controller
             // GPS payment
             'paymentLatitude' => $delivery->payment_latitude ? (float) $delivery->payment_latitude : null,
             'paymentLongitude' => $delivery->payment_longitude ? (float) $delivery->payment_longitude : null,
-            'gpsTrackingLog' => $delivery->gps_tracking_log ?? [],
+            'gpsTrackingLog' => $includeGpsLog ? ($delivery->gps_tracking_log ?? []) : [],
             // Incident
             'hasDiscrepancy' => (bool) $delivery->has_discrepancy,
             'incidentReport' => $delivery->incident_report,
@@ -107,13 +112,25 @@ class DeliveryController extends Controller
             });
         }
 
-        $deliveries = $query->orderByRaw('(planned_date IS NULL) ASC')->orderBy('planned_date', 'desc')->get();
+        $query->orderByRaw('(planned_date IS NULL) ASC')->orderBy('planned_date', 'desc');
 
-        $formatted = $deliveries->map(fn($d) => $this->formatDelivery($d));
+        // Pagination — default 100, capped at 500 to avoid unbounded result sets
+        $perPage = (int) $request->get('per_page', 100);
+        $perPage = max(1, min($perPage, 500));
+        $paginated = $query->paginate($perPage);
+
+        $formatted = collect($paginated->items())->map(fn($d) => $this->formatDelivery($d, false));
 
         return response()->json([
             'success' => true,
             'data' => $formatted,
+            'pagination' => [
+                'total' => $paginated->total(),
+                'per_page' => $paginated->perPage(),
+                'current_page' => $paginated->currentPage(),
+                'last_page' => $paginated->lastPage(),
+                'has_more' => $paginated->hasMorePages(),
+            ],
         ]);
     }
 
@@ -187,7 +204,7 @@ class DeliveryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $this->formatDelivery($delivery),
+            'data' => $this->formatDelivery($delivery, true), // full GPS log for detail view
         ]);
     }
 
@@ -220,7 +237,9 @@ class DeliveryController extends Controller
             }
         }
 
-        $delivery->update($request->all());
+        // BUG FIX: use validated() not $request->all() to prevent mass-assignment
+        // of sensitive fields (signature_data, cash_verified, etc.)
+        $delivery->update($validator->validated());
         $delivery->load(['order.customer', 'chauffeur', 'vehicle']);
 
         return response()->json([
@@ -497,6 +516,7 @@ class DeliveryController extends Controller
         $delivery->latitude = $request->latitude;
         $delivery->longitude = $request->longitude;
         $delivery->appendGpsLog($request->latitude, $request->longitude, 'location_update');
+        $delivery->save(); // BUG FIX: appendGpsLog no longer auto-saves
 
         return response()->json([
             'success' => true,
@@ -536,23 +556,27 @@ class DeliveryController extends Controller
         $totalCollected = 0;
         $summaryItems = [];
 
-        /** @var Delivery $delivery */
-        foreach ($deliveries as $delivery) {
-            $delivery->cash_submitted = true;
-            $delivery->cash_submitted_at = now();
-            $delivery->save();
+        // BUG FIX: wrap all saves in a transaction so a mid-loop crash
+        // doesn't leave deliveries in a partially-submitted state.
+        DB::transaction(function () use ($deliveries, &$totalExpected, &$totalCollected, &$summaryItems) {
+            /** @var Delivery $delivery */
+            foreach ($deliveries as $delivery) {
+                $delivery->cash_submitted = true;
+                $delivery->cash_submitted_at = now();
+                $delivery->save();
 
-            $totalExpected += (float) $delivery->cash_amount;
-            $totalCollected += (float) $delivery->collected_amount;
+                $totalExpected += (float) $delivery->cash_amount;
+                $totalCollected += (float) $delivery->collected_amount;
 
-            $summaryItems[] = [
-                'deliveryId' => $delivery->id,
-                'orderNumber' => $delivery->order->order_number ?? '',
-                'cashAmount' => (float) $delivery->cash_amount,
-                'collectedAmount' => (float) $delivery->collected_amount,
-                'hasDiscrepancy' => (bool) $delivery->has_discrepancy,
-            ];
-        }
+                $summaryItems[] = [
+                    'deliveryId' => $delivery->id,
+                    'orderNumber' => $delivery->order->order_number ?? '',
+                    'cashAmount' => (float) $delivery->cash_amount,
+                    'collectedAmount' => (float) $delivery->collected_amount,
+                    'hasDiscrepancy' => (bool) $delivery->has_discrepancy,
+                ];
+            }
+        });
 
         // Notify admin for verification
         Notification::notifyRole(
@@ -653,7 +677,7 @@ class DeliveryController extends Controller
                     'latitude' => $latest->latitude ? (float) $latest->latitude : null,
                     'longitude' => $latest->longitude ? (float) $latest->longitude : null,
                 ],
-                'activeDeliveries' => $driverDeliveries->map(fn($d) => $this->formatDelivery($d)),
+                'activeDeliveries' => $driverDeliveries->map(fn($d) => $this->formatDelivery($d, false)),
                 'vehicle' => $latest->vehicle ? [
                     'id' => $latest->vehicle->id,
                     'registration' => $latest->vehicle->license_plate,

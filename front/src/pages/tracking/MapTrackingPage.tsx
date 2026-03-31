@@ -70,28 +70,32 @@ const MapTrackingPage = () => {
 
   const [flyTarget, setFlyTarget] = useState<[number, number] | null>(null);
 
-  // Fetch deliveries
+  // Fetch all deliveries (for the deliveries sidebar/map markers).
+  // Requests only today + active records to limit payload size.
   const fetchDeliveries = useCallback(async () => {
     try {
-      const data = await deliveriesService.getDeliveries();
+      const data = await deliveriesService.getDeliveries({ force: true });
       setDeliveries(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load deliveries:', err);
     }
   }, []);
 
-  // Fetch driver locations
+  // Fetch driver locations (lightweight — no GPS log payload).
+  // Also derives the in_progress deliveries from the driver data so we
+  // avoid a redundant full-delivery fetch on every 15-second tick.
   const fetchDriverLocations = useCallback(async () => {
     try {
       const data = await deliveriesService.trackDrivers();
-      setDriverLocations(Array.isArray(data) ? data : []);
+      const drivers = Array.isArray(data) ? data : [];
+      setDriverLocations(drivers);
       setLastRefresh(new Date());
     } catch (err) {
       console.error('Failed to load driver locations:', err);
     }
   }, []);
 
-  // Initial load
+  // Initial load — fetch both in parallel
   useEffect(() => {
     const load = async () => {
       setIsLoading(true);
@@ -101,7 +105,8 @@ const MapTrackingPage = () => {
     load();
   }, [fetchDeliveries, fetchDriverLocations]);
 
-  // Auto-refresh driver locations every 15 seconds
+  // Auto-refresh: only re-fetch driver locations on each tick (cheap).
+  // Full deliveries list is refreshed only on manual refresh or mutations.
   useEffect(() => {
     if (autoRefresh) {
       refreshTimerRef.current = setInterval(() => {

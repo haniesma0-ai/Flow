@@ -92,6 +92,7 @@ class Delivery extends Model
 
     /**
      * Append a GPS tracking entry to the log.
+     * Does NOT call save() — the caller is responsible for persisting.
      */
     public function appendGpsLog(float $lat, float $lng, string $event = 'tracking'): void
     {
@@ -103,7 +104,6 @@ class Delivery extends Model
             'timestamp' => now()->toISOString(),
         ];
         $this->gps_tracking_log = $log;
-        $this->save();
     }
 
     /**

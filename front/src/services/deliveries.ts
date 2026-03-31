@@ -6,9 +6,10 @@ let deliveriesCache: Delivery[] | null = null;
 let deliveriesCacheAt = 0;
 let deliveriesInFlight: Promise<Delivery[]> | null = null;
 
-const invalidateDeliveriesCache = () => {
+export const invalidateDeliveriesCache = () => {
     deliveriesCache = null;
     deliveriesCacheAt = 0;
+    deliveriesInFlight = null;
 };
 
 export const deliveriesService = {
@@ -73,10 +74,12 @@ export const deliveriesService = {
         return response.data;
     },
 
-    /** Driver confirms COD payment collection */
+    /** Driver confirms COD payment collection.
+     *  GPS coordinates are REQUIRED by the backend — the driver must be
+     *  physically present at the delivery location. */
     async confirmPayment(
         id: number,
-        data: { collected_amount: number; latitude?: number; longitude?: number }
+        data: { collected_amount: number; latitude: number; longitude: number }
     ): Promise<Delivery> {
         const response = await api.post(`/deliveries/${id}/confirm-payment`, data);
         invalidateDeliveriesCache();

@@ -9,8 +9,8 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Delivery;
 use App\Models\Invoice;
-use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -39,32 +39,50 @@ class DashboardController extends Controller
 
     private function adminDashboard()
     {
-        $ordersByStatus = $this->getOrdersByStatus();
-        $deliveriesByStatus = $this->getDeliveriesByStatus();
-        $revenueByMonth = $this->getRevenueByMonth();
-        $topProducts = $this->getTopProducts();
-        $recentOrders = $this->getRecentOrders();
-        $yearlyRevenue = $this->getYearlyRevenue();
+        // Cache heavy aggregations for 5 minutes. Real-time counters are excluded
+        // so they stay current on every request.
+        $cached = Cache::remember('admin_dashboard_aggregations', 300, function () {
+            return [
+                'ordersByStatus'     => $this->getOrdersByStatus(),
+                'deliveriesByStatus' => $this->getDeliveriesByStatus(),
+                'revenueByMonth'     => $this->getRevenueByMonth(),
+                'topProducts'        => $this->getTopProducts(),
+                'yearlyRevenue'      => $this->getYearlyRevenue(),
+            ];
+        });
+
+        $totalOrders        = Order::count();
+        $totalRevenue       = $cached['yearlyRevenue'];
+        $totalCustomers     = Customer::count();
+        $totalProducts      = Product::count();
+        $pendingDeliveries  = Delivery::whereNotIn('status', ['completed', 'cancelled'])->count();
+        $lowStockProducts   = Product::whereRaw('stock <= min_stock')->count();
+        $overdueInvoices    = Invoice::where('status', 'overdue')
+            ->orWhere(function ($q) {
+                $q->where('status', 'pending')
+                  ->where('due_date', '<', now());
+            })->count();
+        $ordersByStatus     = $cached['ordersByStatus'];
+        $deliveriesByStatus = $cached['deliveriesByStatus'];
+        $revenueByMonth     = $cached['revenueByMonth'];
+        $topProducts        = $cached['topProducts'];
+        $recentOrders       = $this->getRecentOrders();
 
         return response()->json([
             'success' => true,
             'data' => [
-                'totalOrders' => Order::count(),
-                'totalRevenue' => $yearlyRevenue,
-                'totalCustomers' => Customer::count(),
-                'totalProducts' => Product::count(),
-                'pendingDeliveries' => Delivery::whereNotIn('status', ['completed', 'cancelled'])->count(),
-                'lowStockProducts' => Product::whereRaw('stock <= min_stock')->count(),
-                'overdueInvoices' => Invoice::where('status', 'overdue')
-                    ->orWhere(function ($q) {
-                        $q->where('status', 'pending')
-                            ->where('due_date', '<', now());
-                    })->count(),
-                'ordersByStatus' => $ordersByStatus,
+                'totalOrders'        => $totalOrders,
+                'totalRevenue'       => $totalRevenue,
+                'totalCustomers'     => $totalCustomers,
+                'totalProducts'      => $totalProducts,
+                'pendingDeliveries'  => $pendingDeliveries,
+                'lowStockProducts'   => $lowStockProducts,
+                'overdueInvoices'    => $overdueInvoices,
+                'ordersByStatus'     => $ordersByStatus,
                 'deliveriesByStatus' => $deliveriesByStatus,
-                'revenueByMonth' => $revenueByMonth,
-                'topProducts' => $topProducts,
-                'recentOrders' => $recentOrders,
+                'revenueByMonth'     => $revenueByMonth,
+                'topProducts'        => $topProducts,
+                'recentOrders'       => $recentOrders,
             ],
         ]);
     }
@@ -190,14 +208,22 @@ class DashboardController extends Controller
 
     private function chauffeurDashboard($user)
     {
-        $myDeliveries = Delivery::where('chauffeur_id', $user->id);
+        // Replace 5 separate COUNT queries with one GROUP BY query
+        $statusCounts = Delivery::where('chauffeur_id', $user->id)
+            ->select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
+        $todayCount = Delivery::where('chauffeur_id', $user->id)
+            ->whereDate('planned_date', today())
+            ->count();
 
         $stats = [
-            'total_deliveries' => (clone $myDeliveries)->count(),
-            'pending' => (clone $myDeliveries)->where('status', 'planned')->count(),
-            'in_progress' => (clone $myDeliveries)->where('status', 'in_progress')->count(),
-            'completed' => (clone $myDeliveries)->where('status', 'completed')->count(),
-            'today' => (clone $myDeliveries)->whereDate('planned_date', today())->count(),
+            'total_deliveries' => $statusCounts->sum(),
+            'pending'          => (int) ($statusCounts['planned'] ?? 0),
+            'in_progress'      => (int) ($statusCounts['in_progress'] ?? 0),
+            'completed'        => (int) ($statusCounts['completed'] ?? 0),
+            'today'            => $todayCount,
         ];
 
         $currentDelivery = Delivery::with(['order.customer', 'vehicle'])
@@ -295,12 +321,24 @@ class DashboardController extends Controller
                     ->groupBy(DB::raw('DATE(created_at)'));
                 break;
             case 'quarter':
-                $query->whereRaw('QUARTER(created_at) = QUARTER(NOW())')
+                $query = Order::select(
+                    DB::raw('WEEK(created_at) as date'),
+                    DB::raw('COUNT(*) as orders_count'),
+                    DB::raw('SUM(total) as total_amount')
+                )
+                    ->where('status', '!=', 'cancelled')
+                    ->whereRaw('QUARTER(created_at) = QUARTER(NOW())')
                     ->whereYear('created_at', now()->year)
                     ->groupBy(DB::raw('WEEK(created_at)'));
                 break;
             case 'year':
-                $query->whereYear('created_at', now()->year)
+                $query = Order::select(
+                    DB::raw('MONTH(created_at) as date'),
+                    DB::raw('COUNT(*) as orders_count'),
+                    DB::raw('SUM(total) as total_amount')
+                )
+                    ->where('status', '!=', 'cancelled')
+                    ->whereYear('created_at', now()->year)
                     ->groupBy(DB::raw('MONTH(created_at)'));
                 break;
         }

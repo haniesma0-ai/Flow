@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { AuthState } from '@/types';
 import { authService } from '@/services/auth';
+import { invalidateDeliveriesCache } from '@/services/deliveries';
 import { toast } from 'sonner';
 
 interface AuthContextType {
@@ -82,6 +83,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('auth');
+      // Clear module-level service caches so a subsequent login never
+      // briefly shows the previous user's data.
+      invalidateDeliveriesCache();
       setAuth({
         user: null,
         token: null,
